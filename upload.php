@@ -198,7 +198,23 @@ function getHeaders() {
 
 }
 
-function getRows($file) {
+function getISIS($line) {
+
+	global $mysqli;
+
+	$search = "SELECT * FROM `table 1` WHERE `LineCode` = '" . $line . "'";
+
+	$res = mysqli_query($mysqli, $search);
+
+	$res->data_seek(0);
+	
+	while ($row = $res->fetch_assoc()) $ISIS[$row['Part Number']][] = $row;
+	
+	return $ISIS;
+
+}
+
+function processRows($file) {
 
 	global $headers, $rows;
 	
@@ -225,22 +241,6 @@ function getRows($file) {
 	}
 	
 	fclose($file);
-
-}
-
-function getISIS($line) {
-
-	global $mysqli;
-
-	$search = "SELECT * FROM `table 1` WHERE `LineCode` = '" . $line . "'";
-
-	$res = mysqli_query($mysqli, $search);
-
-	$res->data_seek(0);
-	
-	while ($row = $res->fetch_assoc()) $ISIS[$row['Part Number']][] = $row;
-	
-	return $ISIS;
 
 }
 
@@ -832,7 +832,7 @@ if (empty($_FILES) && !file_exists("files/file.csv")) echo $form;
 
 else {
 
-	getFile(); addCategories($file); validateHeaders(fgetcsv($file)); getRows($file); 
+	getFile(); addCategories($file); validateHeaders(fgetcsv($file)); processRows($file); 
 	
 	if (empty($errors)) { insert($rows); prioritizeFilters(); }
 	
