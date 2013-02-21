@@ -67,13 +67,21 @@ reload.onreadystatechange=function()
 {
   if (reload.readyState==4 && reload.status==200)
   {
-    window.location.reload();
+    window.location.href="upload.php";
   }
 }
 
 reload.open("GET", "admin/reload.php", true);
 
 reload.send();
+}
+
+function popup(url) {
+
+var popup = window.open(url, 'Categories', 'height=700,width=640');
+
+if (window.focus) {popup.focus()}
+
 }
 
 </script>
@@ -355,7 +363,7 @@ function validateValues($name, $value, $c) {
 		foreach ($categories as $cat) {
 		
 			if (in_array($cat, $validCategories)) $data = $value; 
-				
+			
 			else $errors[$name][$cat][] = $c;
 		
 		}
@@ -440,9 +448,13 @@ function addFilters($array) {
 	
 	foreach ($array as $arr) {
 
-		$response = "[$arr] is not in the filter database?";
+		// $response = "[$arr] is not in the filter database?";
 		
-		$response .= "<div id=\"add$i\"><a href=\"#\" onclick=\"addOne('filter',$i,'$arr')\">Add</a></div>";
+		// $response .= "<div id=\"add$i\"><a href=\"#\" onclick=\"addOne('filter',$i,'$arr')\">Add</a></div>";
+		
+		$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('filter',$i,'$arr'); return false;\">Add</a></span>";
+		
+		$response .= " - $arr</div>";
 	
 		$i++;
 	
@@ -466,11 +478,27 @@ function addCategories($file) {
 	
 	$skip = fgetcsv($file);
 	
-	while ($row = fgetcsv($file)) $categories[] = $row[4];
+	$e = 2;
+	
+	while ($row = fgetcsv($file)) {
+	
+		if (empty($row[4])) $empty[] = $e;
+	
+		else $categories[] = $row[4];
+	
+		$e++;
+	
+	}
 	
 	rewind($file);
 	
+	if (!empty($empty)) { $rows = implode(',', $empty); exit("Rows $rows are empty or missing category values<br/><input type='button' value='Reload' onclick='reload()'>"); }
+	
 	$i = 0;
+	
+	if (!isset($_GET['continue'])) echo '<h3>See <a href=\'javascript:popup("listCategories.php")\'>categories</a> already in the database.&nbsp;&nbsp;&nbsp;<input type="button" value="Reload" onclick="reload()"></h3><hr>';
+	
+	sort($categories);
 	
 	foreach (array_unique($categories) as $cat) {
 	
@@ -478,9 +506,9 @@ function addCategories($file) {
 		
 			$add = true;
 			
-			$response = "$cat is not in the database.";
-			
-			$response .= "<div id=\"add$i\"><a href=\"#\" onclick=\"addOne('category',$i,'$cat')\">Add</a></div>";
+			$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('category',$i,'$cat'); return false;\">Add</a></span>";
+		
+			$response .= " - $cat</div>";
 		
 			$i++;
 		
@@ -491,10 +519,8 @@ function addCategories($file) {
 	}
 	
 	if ($add) {
-	
-		echo "<p>See categories already in the database.</p>";
 		
-		echo '<a href="upload.php">Continue</a>';
+		echo '<hr><a href="upload.php?continue=true">Continue</a>';
 
 		exit();
 
@@ -512,6 +538,8 @@ function insert($data) {
 		
 		$document = $row;
 		
+		$document['Manufacturer SKU'] = substr($row["ISIS SKU"], 3);
+		
 		if (array_key_exists($i, $data['filters'])) $document['Filters'] = $data['filters'][$i];
 		
 		$checkSKU = $products->find(["ISIS SKU" => $row["ISIS SKU"]]);
@@ -525,6 +553,34 @@ function insert($data) {
 	}
 	
 	// var_dump($rows);
+
+}
+
+function prioritizeFilters() {
+
+	global $db;
+	
+	$categories = $db->categories;
+	
+	$filters = $db->filters;
+	
+	$res = $filters->find();
+	
+	foreach ($res as $rows) { 
+		
+		if (array_key_exists('values', $rows)) {
+		
+			foreach ($rows['values'] as $r) {
+			
+				$categories->update(['orw' => $r['category']], ['$addToSet' => ['filters' => $rows['name']]]);
+				
+				// $filtersByCategory[$r['category']][] = $rows['name'];
+
+			}
+			
+		}
+
+	}
 
 }
 
@@ -546,9 +602,11 @@ function printErrors($array) {
 		
 			foreach ($error as $name => $rows) {
 			
-				$response = "Manufacturer [$name] does not exist in the database. Rows " . implode(',', $rows);
+				$range = implode(',', $rows);
 			
-				$response .= "<div id=\"add$i\"><a href=\"#\" onclick=\"addOne('brand',$i,'$name')\">Add</a></div>";
+				$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('brand',$i,'$name'); return false;\">Add</a></span>";
+		
+				$response .= " - Manufacturer [$name] does not exist in the database. Rows " . substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup></div>";
 			
 				$i++;
 			
@@ -608,7 +666,7 @@ function printErrors($array) {
 		
 			echo "<h3>DESCRIPTION</h3>";
 		
-			$response = "$type is too long in row(s) " . implode($error) . "<br />";
+			$response = "$type is too long in row(s) " . implode(',', $error) . "<br />";
 			
 			echo $response;
 		
@@ -640,20 +698,24 @@ function printErrors($array) {
 				
 				$response = '';
 				
-				foreach ($value as $info) {
+				if ($val !== '') {
 				
-					foreach ($info as $cat => $rows) {
+					foreach ($value as $info) {
+					
+						foreach ($info as $cat => $rows) {
 
-						$row = implode(',', $rows);
+							$row = implode(',', $rows);
+							
+							$response .= "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$val'); return false;\">Add</a></span>";
+		
+							$response .= " - [$filter] value [$val] is invalid for [$cat] in row(s) $row</div>";
+							
+							$i++;
 					
-						$response .= "[$filter] value [$val] is invalid for [$cat] in row(s) $row";
-						
-						$response .= "<div id=\"add$i\"><a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$val')\">Add</a></div>";
+						}
 					
-						$i++;
-				
 					}
-				
+					
 				}
 				
 				echo $response;
@@ -685,7 +747,7 @@ $form = <<<EOT
 				<form enctype="multipart/form-data" action="{$_SERVER['PHP_SELF']}" method="POST">
 				<input type="hidden" name="MAX_FILE_SIZE" value="200000000" />
 				<input name="userfile" type="file" />
-				<input type="submit" value="submit" />
+				<input type="submit" value="Submit" />
 				</form>
 				</center>
 EOT;
@@ -740,7 +802,7 @@ else {
 
 	getFile(); addCategories($file); validateHeaders(fgetcsv($file)); getRows($file); 
 	
-	if (empty($errors)) insert($rows);
+	if (empty($errors)) { insert($rows); prioritizeFilters(); }
 	
 	else printErrors($errors);
 	
