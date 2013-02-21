@@ -145,8 +145,8 @@ $list .= "</ul>";
 <body>
 
 <?php echo $list; ?>
-<script type="text/javascript">
-$("#menu").menu();
-</script>
+
+<script type="text/javascript">$("#menu").menu();</script>
+
 </body>
 </html>

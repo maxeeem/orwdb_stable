@@ -57,6 +57,14 @@ xmlhttp.open("GET","admin/addFilterValues.php?filter="+a+"&category="+arr0+"&val
 xmlhttp.send();
 }
 
+function listCategories(categories) {
+
+var categories = '<h3>See <a href=\'javascript:popup("listCategories.php")\'>categories</a> already in the database.&nbsp;&nbsp;&nbsp;<input type="button" value="Reload" onclick="reload()"></h3><hr>'
+
+document.getElementById("top").innerHTML = categories
+
+}
+
 function reload()
 {
 var reload;
@@ -71,7 +79,7 @@ reload.onreadystatechange=function()
   }
 }
 
-reload.open("GET", "admin/reload.php", true);
+reload.open("GET", "admin/reload.php?standalone=false", true);
 
 reload.send();
 }
@@ -390,6 +398,8 @@ function validateValues($name, $value, $c) {
 		
 			if ($char >= 1500) { $errors['Description'][] = $c; $char = 0; }
 			
+			else $char = 0;
+			
 		}
 		
 	}
@@ -443,14 +453,30 @@ function validateFilters($category, $name, $value, $c) {
 function addFilters($array) {
 
 	global $validFilters;
-	
+
 	$i = 0;
 	
-	foreach ($array as $arr) {
-
-		// $response = "[$arr] is not in the filter database?";
+	$filters = $validFilters;
+	
+	ksort($filters);
+	
+	$select = "<div style='text-align: center;'><select id='filters'><option>Filters in the database</option>";
+	
+	$select_T = "<select id='filters_T'><option>Title Filters</option>";
+	
+	foreach ($filters as $name => $categories) {
+	
+		if (strpos($name, "T_") === false) $select .= "<option>$name</option>";
 		
-		// $response .= "<div id=\"add$i\"><a href=\"#\" onclick=\"addOne('filter',$i,'$arr')\">Add</a></div>";
+		else $select_T .= "<option>$name</option>";
+	
+	}
+	
+	echo $select . "</select>";
+	
+	echo $select_T . "</select></div>";
+	
+	foreach ($array as $arr) {
 		
 		$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('filter',$i,'$arr'); return false;\">Add</a></span>";
 		
@@ -462,9 +488,7 @@ function addFilters($array) {
 	
 	}
 	
-	echo "<p>See filters already in the database.</p>";
-	
-	echo '<a href="upload.php">Continue</a>';
+	echo '<br /><a href="upload.php">Continue</a>';
 	
 	exit();
 
@@ -496,7 +520,7 @@ function addCategories($file) {
 	
 	$i = 0;
 	
-	if (!isset($_GET['continue'])) echo '<h3>See <a href=\'javascript:popup("listCategories.php")\'>categories</a> already in the database.&nbsp;&nbsp;&nbsp;<input type="button" value="Reload" onclick="reload()"></h3><hr>';
+	echo '<div id="top"></div>';
 	
 	sort($categories);
 	
@@ -520,7 +544,9 @@ function addCategories($file) {
 	
 	if ($add) {
 		
-		echo '<hr><a href="upload.php?continue=true">Continue</a>';
+		echo "<script language='javascript'>listCategories()</script>";
+		
+		echo '<hr><a href="upload.php">Continue</a>';
 
 		exit();
 
@@ -603,10 +629,12 @@ function printErrors($array) {
 			foreach ($error as $name => $rows) {
 			
 				$range = implode(',', $rows);
+				
+				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 			
 				$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('brand',$i,'$name'); return false;\">Add</a></span>";
 		
-				$response .= " - Manufacturer [$name] does not exist in the database. Rows " . substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup></div>";
+				$response .= " - Manufacturer [$name] does not exist in the database. Row(s) $show</div>";
 			
 				$i++;
 			
@@ -641,7 +669,7 @@ function printErrors($array) {
 		
 			foreach ($error as $name => $rows) {
 			
-				$response = "ISIS SKU [$name] ";
+				$response = "ISIS SKU <font face='monospace'>[$name]</font> ";
 				
 				$response .= (count($rows) > 1) ? "is repeated in rows " . implode(',', $rows) : "does not exist in ISIS. Row " . $rows[0];  
 				
@@ -665,8 +693,12 @@ function printErrors($array) {
 		if ($type == 'Description') {
 		
 			echo "<h3>DESCRIPTION</h3>";
+			
+			$range = implode(',', $error);
+			
+			$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 		
-			$response = "$type is too long in row(s) " . implode(',', $error) . "<br />";
+			$response = "$type is too long in row(s) $show<br />";
 			
 			echo $response;
 		
@@ -690,25 +722,25 @@ function printErrors($array) {
 			
 			echo "<h3>FILTERS</h3>";
 			
-			$i = 0;
+			$i = 1;
 		
 			foreach ($error as $filter => $value) {
-			
-				$val = key($value);
-				
+
 				$response = '';
 				
-				if ($val !== '') {
+				foreach ($value as $val => $info) {
 				
-					foreach ($value as $info) {
-					
+					if ($val !== '') {
+				
 						foreach ($info as $cat => $rows) {
-
-							$row = implode(',', $rows);
 							
-							$response .= "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$val'); return false;\">Add</a></span>";
+							$range = implode(',', $rows);
+				
+							$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+							
+							$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$val'); return false;\">Add</a></span>";
 		
-							$response .= " - [$filter] value [$val] is invalid for [$cat] in row(s) $row</div>";
+							$response .= " - <font face='monospace'>[$filter]</font> value <font face='monospace'>[$val]</font> is missing<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<br /><br /></div>";
 							
 							$i++;
 					
@@ -726,7 +758,7 @@ function printErrors($array) {
 	
 	}
 	
-	echo '<br /><h3><a href="">Continue</a></h3>&nbsp;&nbsp;&nbsp;<input type="button" value="Reload" onclick="reload()">';
+	echo '<br /><h3><input type="button" value="Reload" onclick="reload()">&nbsp;&nbsp;&nbsp;<a href="">Continue</a></h3>';
 	
 	exit();
 
@@ -805,9 +837,6 @@ else {
 	if (empty($errors)) { insert($rows); prioritizeFilters(); }
 	
 	else printErrors($errors);
-	
-	
-	// var_dump($rows);// var_dump($errors);
 
 }
 
