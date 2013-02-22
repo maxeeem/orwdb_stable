@@ -110,16 +110,6 @@ require "db/.mysql.php";
 
 {# Getters
 
-function getFile() {
-
-	global $file;
-
-	if (!file_exists("files/file.csv")) copy($_FILES['userfile']['tmp_name'], "files/file.csv");
-	
-	$file = fopen("files/file.csv", "r");
-
-}
-
 function dbConnect($dbhost, $dbname) {
 
 	$m = new MongoClient("mongodb://$dbhost");
@@ -127,6 +117,16 @@ function dbConnect($dbhost, $dbname) {
 	$db = $m->$dbname;
 	
 	return $db;
+
+}
+
+function getFile() {
+
+	global $file;
+
+	if (!file_exists("files/file.csv")) copy($_FILES['userfile']['tmp_name'], "files/file.csv");
+	
+	$file = fopen("files/file.csv", "r");
 
 }
 
@@ -366,15 +366,17 @@ function validateValues($name, $value, $c) {
 	
 	if (strpos($name, 'Category') !== false) { 
 		
-		$categories = explode('|', $value);
+		$data = $value; // no validation
 		
-		foreach ($categories as $cat) {
+		// $categories = explode('|', $value);
 		
-			if (in_array($cat, $validCategories)) $data = $value; 
+		// foreach ($categories as $cat) {
+		
+			// if (in_array($cat, $validCategories)) $data = $value; 
 			
-			else $errors[$name][$cat][] = $c;
+			// else $errors[$name][$cat][] = $c;
 		
-		}
+		// }
 		
 	}
 	
@@ -508,7 +510,19 @@ function addCategories($file) {
 	
 		if (empty($row[4])) $empty[] = $e;
 	
-		else $categories[] = $row[4];
+		else {
+		
+			if (strpos($row[4], "|") !== false) {
+			
+				$cats = explode('|', $row[4]);
+				
+				foreach ($cats as $single_cat) $categories[] = $single_cat;
+			
+			}
+			
+			else $categories[] = $row[4];
+	
+		}
 	
 		$e++;
 	
@@ -703,20 +717,6 @@ function printErrors($array) {
 			echo $response;
 		
 		}
-	
-		if ($type == 'Category') {
-		
-			echo "<h3>CATEGORY</h3>";
-		
-			foreach ($error as $category => $rows) {
-		
-				$response = "Category [$category] is invalid in row(s) " . implode(',', $rows) . "<br />";
-				
-				echo $response;
-		
-			}
-		
-		}
 		
 		if ($type == 'Filters') {
 			
@@ -837,6 +837,8 @@ else {
 	if (empty($errors)) { insert($rows); prioritizeFilters(); }
 	
 	else printErrors($errors);
+	
+	
 
 }
 

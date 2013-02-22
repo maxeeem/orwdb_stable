@@ -22,6 +22,10 @@ function addValues($f, $c, $v) {
 
 	global $db;
 	
+	$categories = $db->categories;
+	
+	$categories->update(["orw" => $c], ['$addToSet' => ["filters" => $f]]);
+	
 	$filters = $db->filters;
 	
 	$checkValues = $filters->find(["name" => $f, "values" => ['$exists' => true]]);
