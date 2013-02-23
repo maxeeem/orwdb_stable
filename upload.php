@@ -154,7 +154,7 @@ function getFilters() {
 		
 	}
 
-	return $dbfilters;
+	return isset($dbfilters) ? $dbfilters : array();
 
 }
 
@@ -182,7 +182,7 @@ function getCategories() {
 
 	foreach ($res as $r) $db_categories[] = $r['orw'];
 
-	return $db_categories;
+	return isset($db_categories) ? $db_categories : array();
 
 }
 

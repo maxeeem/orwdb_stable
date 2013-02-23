@@ -41,9 +41,9 @@ function getCategories() {
 
 	foreach ($res as $r) $db_categories[] = $r['orw'];
 
-	sort($db_categories);
+	if (isset($db_categories)) { sort($db_categories); return $db_categories; }
 	
-	return $db_categories;
+	else return array();
 
 }
 
@@ -59,7 +59,7 @@ $db = dbConnect(DBHOST, DBNAME);
 
 $validCategories = getCategories();
 
-foreach ($validCategories as $i => $category) {
+foreach ($validCategories as $category) {
 
 	$levels = explode(".", $category);
 	
@@ -69,74 +69,48 @@ foreach ($validCategories as $i => $category) {
 	
 }
 
+foreach ($nav as &$lev0) { // Remove nulls
 
-
-// var_dump($nav);
-
-
-$list = "<ul id='menu'>";
-
-foreach ($nav as $key0 => $lev0) {
+	foreach ($lev0 as &$lev1) {
 	
-	$list .= "<li><a href='#'>$key0</a>";
-	
-	foreach ($lev0 as $key1 => $lev1) {
-	
-		if (count($lev1) == 1 && array_key_exists('', $lev1)) $list .= "<ul><li><a href='#'>$key1</a></li></ul></li>";
+		if (array_key_exists('', $lev1)) unset($lev1['']);
 		
-		else {
+		foreach ($lev1 as &$lev2) {	if (array_key_exists('', $lev2)) unset($lev2['']); }
 		
-			$list .= "<ul><li><a href='#'>$key1</a><ul>";
-		
-			foreach ($lev1 as $key2 => $lev2) {
-			
-				if (count($lev2) == 1 && array_key_exists('', $lev2)) $list .= "<li><a href='#'>$key2</a></li>";
-			
-				else {
-				
-					$list .= "<li><a href='#'>$key2</a>";
-				
-					foreach ($lev2 as $key3 => $lev3) {
-				
-						if (count($lev3) == 1 && array_key_exists('', $lev3)) $list .= "<li><a href='#'>$key3</a></li></ul></li>";
-				
-						else {
-						
-							if ($key3 !== '') { 
-							
-								if ($lev3 !== null) {	
-								
-									$list .= "<ul>";
-								
-									foreach ($lev3 as $key => $value) $list .= "<li><a href='#'>$key</a></li>";
-
-								}
-								
-								else $list .= "<ul><li><a href='#'>$key3</a></li>";
-							
-								$list .= "</ul>";
-							
-							}
-							
-						}
-				
-					}
-					
-					$list .= "</li></ul>";
-		
-				}
-			
-			}
-			
-			$list .= "</li></ul>";
-		
-		}
-	
-	}
+	} 
 
 }
 
-$list .= "</ul>";
+$text = "<ul id='menu'>";
+
+foreach (array_keys($nav) as $level1) {
+
+	$text .= "<li><a href='#'>$level1</a>";
+	$text .= "<ul>";
+	
+	if (is_array($nav[$level1])) { foreach (array_keys($nav[$level1]) as $level2) {
+	
+		$text .= "<li><a href='#'>$level2</a>";
+		$text .= "<ul>";
+		
+		if (is_array($nav[$level1][$level2])) { foreach (array_keys($nav[$level1][$level2]) as $level3) {
+		
+			$text .= "<li><a href='#'>$level3</a>";
+			$text .= "<ul>";
+			
+			if (is_array($nav[$level1][$level2][$level3])) { foreach (array_keys($nav[$level1][$level2][$level3]) as $level4) {
+			
+				$text .= "<li><a href='#'>$level4</a>";
+				$text .= "</li>";
+			
+			} $text .= "</ul>"; }
+		
+		} $text .= "</ul>"; }
+	
+	} $text .= "</ul>"; }
+
+} $text .= "</ul>";
+
 
 }
 
@@ -144,7 +118,7 @@ $list .= "</ul>";
 
 <body>
 
-<?php echo $list; ?>
+<?php echo str_replace("<ul></ul>", "", $text); ?>
 
 <script type="text/javascript">$("#menu").menu();</script>
 
