@@ -628,7 +628,7 @@ function prioritizeFilters() {
 
 {# Output
 
-function printErrors($array) {
+function printErrors($array) { global $validFilters;
 
 	$bullets = ['Bullet Point 1', 'Bullet Point 2', 'Bullet Point 3', 'Bullet Point 4', 'Bullet Point 5'];
 
@@ -733,14 +733,32 @@ function printErrors($array) {
 					if ($val !== '') {
 				
 						foreach ($info as $cat => $rows) {
+						
+							$vals = "empty"; $t_vals = $vals;
 							
-							$range = implode(',', $rows);
+							$range = implode(', ', $rows);
 				
-							$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+							$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\" title='$range'>more</a></sup>" : $range;
+							
+							if (isset($validFilters[$filter][$cat])) {
+
+								asort($validFilters[$filter][$cat]);
+								
+								$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
+								
+								$t_vals = implode(", ", $validFilters[$filter][$cat]);
+							
+							}
 							
 							$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$val'); return false;\">Add</a></span>";
 		
-							$response .= " - <font face='monospace'>[$filter]</font> value <font face='monospace'>[$val]</font> is missing<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<br /><br /></div>";
+							$response .= " - <font face='monospace'>[$filter";
+							
+							$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title ='$t_vals'>&lowast;</a></sup>";
+							
+							$response .= "]</font> value <font face='monospace'>[$val]</font> is missing<br />";
+							
+							$response .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<br /><br /></div>";
 							
 							$i++;
 					
