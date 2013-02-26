@@ -743,7 +743,9 @@ function printErrors($array) { global $validFilters;
 								
 								$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
 								
-								$t_vals = implode("\n", $validFilters[$filter][$cat]);
+								$vals = str_replace("'", "\'", $vals);
+								
+								$t_vals = implode("\n", $validFilters[$filter][$cat]);						
 							
 							}
 							
@@ -753,7 +755,7 @@ function printErrors($array) { global $validFilters;
 		
 							$response .= " - <font face='monospace'>[$filter";
 							
-							$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title ='$t_vals'>&lowast;</a></sup>";
+							$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title =\"$t_vals\">&lowast;</a></sup>";
 							
 							$response .= "]</font> value <font face='monospace'>[$val]</font> is missing<br />";
 							
