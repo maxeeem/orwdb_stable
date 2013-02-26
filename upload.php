@@ -612,8 +612,6 @@ function insertFiltersByCategory() {
 			foreach ($rows['values'] as $r) {
 			
 				$categories->update(['orw' => $r['category']], ['$addToSet' => ['filters' => $rows['name']]]);
-				
-				// $filtersByCategory[$r['category']][] = $rows['name'];
 
 			}
 			
@@ -858,7 +856,7 @@ else {
 		
 		insertFiltersByCategory();
 		
-		echo 'Success! <input type="button" value="Reload" onclick="reload()">';
+		echo 'Success! <a href="index.php">Go Home</a>';
 		
 	}
 	
