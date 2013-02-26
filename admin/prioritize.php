@@ -95,7 +95,7 @@ function getFilters() {
 	
 	foreach ($res as $rows) { 
 		
-		if (array_key_exists('filters', $rows)) {
+		if (array_key_exists('filters', $rows) && count($rows['filters']) > 1) {
 			
 			$filtersByCategory[$rows['orw']] = $rows['filters'];
 			
