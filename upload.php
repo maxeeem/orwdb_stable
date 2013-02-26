@@ -3,8 +3,7 @@
 <head>
 <script>
 
-function addOne(type, i, item)
-{
+function addOne(type, i, item) {
 var xmlhttp;
 
 item = item.replace(/&/g,'%26')
@@ -34,8 +33,7 @@ else if (type == "brand") {
 xmlhttp.send();
 }
 
-function addFilterValues(i, a, arr0, arr1)
-{
+function addFilterValues(i, a, arr0, arr1) {
 var xmlhttp;
 
 a = a.replace(/&/g,'%26')
@@ -65,8 +63,7 @@ document.getElementById("top").innerHTML = categories
 
 }
 
-function reload()
-{
+function reload() {
 var reload;
 
 reload = new XMLHttpRequest();
@@ -642,7 +639,7 @@ function printErrors($array) { global $validFilters;
 		
 			foreach ($error as $name => $rows) {
 			
-				$range = implode(',', $rows);
+				$range = implode(', ', $rows);
 				
 				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 			
@@ -668,7 +665,7 @@ function printErrors($array) { global $validFilters;
 			
 				$response = "UPC [$name] is ";
 				
-				$response .= (count($rows) > 1) ? "repeated in rows " . implode(',', $rows) : 'invalid in row ' . $rows[0];
+				$response .= (count($rows) > 1) ? "repeated in rows " . implode(', ', $rows) : 'invalid in row ' . $rows[0];
 
 				$response .= "<br />";				
 				
@@ -685,7 +682,7 @@ function printErrors($array) { global $validFilters;
 			
 				$response = "ISIS SKU <font face='monospace'>[$name]</font> ";
 				
-				$response .= (count($rows) > 1) ? "is repeated in rows " . implode(',', $rows) : "does not exist in ISIS. Row " . $rows[0];  
+				$response .= (count($rows) > 1) ? "is repeated in rows " . implode(', ', $rows) : "does not exist in ISIS. Row " . $rows[0];  
 				
 				$response .= '<br />';
 			
@@ -698,7 +695,7 @@ function printErrors($array) { global $validFilters;
 		
 			echo "<h3>BULLET POINTS</h3>";
 		
-			$response = "$type is too long in row(s) " . implode($error) . "<br />";
+			$response = "$type is too long in row(s) " . implode(', ', $error) . "<br />";
 			
 			echo $response;
 		
@@ -708,7 +705,7 @@ function printErrors($array) { global $validFilters;
 		
 			echo "<h3>DESCRIPTION</h3>";
 			
-			$range = implode(',', $error);
+			$range = implode(', ', $error);
 			
 			$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 		
@@ -746,11 +743,13 @@ function printErrors($array) { global $validFilters;
 								
 								$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
 								
-								$t_vals = implode(", ", $validFilters[$filter][$cat]);
+								$t_vals = implode("\n", $validFilters[$filter][$cat]);
 							
 							}
 							
-							$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$val'); return false;\">Add</a></span>";
+							$js_val = str_replace("'", "\'", $val);
+							
+							$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$js_val'); return false;\">Add</a></span>";
 		
 							$response .= " - <font face='monospace'>[$filter";
 							
