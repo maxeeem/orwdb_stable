@@ -223,7 +223,11 @@ function processRows($file) {
 		
 			if (array_key_exists($i, $headers)) $data[$headers[$i]] = validateValues($headers[$i], $datum, $c);
 			
-			elseif (array_key_exists($i, $headers['filters'])) $filter[$headers['filters'][$i]] = validateFilters($data['Category'], $headers['filters'][$i], $datum, $c);
+			elseif (array_key_exists($i, $headers['filters'])) {
+			
+				if ($datum != '')	$filter[$headers['filters'][$i]] = validateFilters($data['Category'], $headers['filters'][$i], $datum, $c);
+			
+			}
 			
 			else exit("<small>Unrecognized columns in row {$c}.</small>");
 		
@@ -434,10 +438,8 @@ function validateFilters($category, $name, $value, $c) {
 	$categories = explode('|', $category);
 	
 	foreach ($categories as $cat) {
-	
-		if ($value == '') $data = $value;
 		
-		elseif (array_key_exists($cat, $validFilters[$name]) && in_array($value, $validFilters[$name][$cat])) $data = $value;
+		if (array_key_exists($cat, $validFilters[$name]) && in_array($value, $validFilters[$name][$cat])) $data = $value;
 		
 		else $errors['Filters'][$name][$value][$cat][] = $c;
 	
