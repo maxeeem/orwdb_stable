@@ -595,7 +595,7 @@ function insert($data) {
 
 }
 
-function prioritizeFilters() {
+function insertFiltersByCategory() {
 
 	global $db;
 	
@@ -775,7 +775,8 @@ function printErrors($array) { global $validFilters;
 	
 	}
 	
-	echo '<br /><h3><input type="button" value="Reload" onclick="reload()">&nbsp;&nbsp;&nbsp;<a href="">Continue</a></h3>';
+	echo '<br /><h3><input type="button" value="Reload" onclick="reload()">&nbsp;&nbsp;&nbsp;';
+	echo (count($array) == 1) ? '<a href="?skip_isis">Continue</a></h3>' : '<a href="">Continue</a></h3>';
 	
 	exit();
 
@@ -851,9 +852,17 @@ else {
 
 	getFile(); addCategories($file); validateHeaders(fgetcsv($file)); processRows($file); 
 	
-	if (empty($errors)) { insert($rows); prioritizeFilters(); }
+	if (empty($errors) || isset($_GET['skip_isis'])) { 
 	
-	else { var_dump($errors); printErrors($errors); }
+		insert($rows);
+		
+		insertFiltersByCategory();
+		
+		echo 'Success! <input type="button" value="Reload" onclick="reload()">';
+		
+	}
+	
+	else printErrors($errors);
 	
 	
 
