@@ -435,8 +435,10 @@ function validateFilters($category, $name, $value, $c) {
 	
 	foreach ($categories as $cat) {
 	
-		if (array_key_exists($cat, $validFilters[$name]) && in_array($value, $validFilters[$name][$cat])) $data = $value;
-
+		if ($value == '') $data = $value;
+		
+		elseif (array_key_exists($cat, $validFilters[$name]) && in_array($value, $validFilters[$name][$cat])) $data = $value;
+		
 		else $errors['Filters'][$name][$value][$cat][] = $c;
 	
 	}
@@ -727,44 +729,40 @@ function printErrors($array) { global $validFilters;
 				
 				foreach ($value as $val => $info) {
 				
-					if ($val !== '') {
-				
-						foreach ($info as $cat => $rows) {
+					foreach ($info as $cat => $rows) {
+					
+						$vals = "empty"; $t_vals = $vals;
 						
-							$vals = "empty"; $t_vals = $vals;
-							
-							$range = implode(', ', $rows);
-				
-							$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\" title='$range'>more</a></sup>" : $range;
-							
-							if (isset($validFilters[$filter][$cat])) {
+						$range = implode(', ', $rows);
+			
+						$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\" title='$range'>more</a></sup>" : $range;
+						
+						if (isset($validFilters[$filter][$cat])) {
 
-								asort($validFilters[$filter][$cat]);
-								
-								$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
-								
-								$vals = str_replace("'", "\'", $vals);
-								
-								$t_vals = implode("\n", $validFilters[$filter][$cat]);						
+							asort($validFilters[$filter][$cat]);
 							
-							}
+							$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
 							
-							$js_val = str_replace("'", "\'", $val);
+							$vals = str_replace("'", "\'", $vals);
 							
-							$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$js_val'); return false;\">Add</a></span>";
-		
-							$response .= " - <font face='monospace'>[$filter";
-							
-							$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title =\"$t_vals\">&lowast;</a></sup>";
-							
-							$response .= "]</font> value <font face='monospace'>[$val]</font> is missing<br />";
-							
-							$response .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<br /><br /></div>";
-							
-							$i++;
-					
+							$t_vals = implode("\n", $validFilters[$filter][$cat]);						
+						
 						}
-					
+						
+						$js_val = str_replace("'", "\'", $val);
+						
+						$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$js_val'); return false;\">Add</a></span>";
+	
+						$response .= " - <font face='monospace'>[$filter";
+						
+						$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title =\"$t_vals\">&lowast;</a></sup>";
+						
+						$response .= "]</font> value <font face='monospace'>[$val]</font> is missing<br />";
+						
+						$response .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<br /><br /></div>";
+						
+						$i++;
+				
 					}
 					
 				}
@@ -855,7 +853,7 @@ else {
 	
 	if (empty($errors)) { insert($rows); prioritizeFilters(); }
 	
-	else printErrors($errors);
+	else { var_dump($errors); printErrors($errors); }
 	
 	
 
