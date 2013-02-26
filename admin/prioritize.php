@@ -103,6 +103,8 @@ function getFilters() {
 
 	}
 
+	ksort($filtersByCategory);
+	
 	return $filtersByCategory;
 
 }
