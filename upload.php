@@ -295,7 +295,7 @@ function validateValues($name, $value, $c) {
 	
 	global $errors, $dir, $current_linecode;
 	
-	global $UPCs, $SKUs, $char;
+	global $UPCs, $SKUs, $char, $IMGs, $PDFs;
 	
 	$data = 'invalid';
 	
@@ -410,18 +410,28 @@ function validateValues($name, $value, $c) {
 	if (strpos($name, 'Image') !== false) { 
 		
 		$data = $value;
-		/*if (file_exists($dir . $current_linecode . '/images/' . $value)) $data = $value; 
-			
-		else $errors[$c][$name] = $value;*/
+		
+		if ($value != '') {
+		
+			$IMGs[$current_linecode][] = $value;
+		
+			if (!file_exists($dir . $current_linecode . '/orwdb/images/' . $value)) $errors[$name][$value][] = $c;
+		
+		}
 		
 	}
 
 	if (strpos($name, 'Instructions') !== false) { 
 		
 		$data = $value;
-		/*if (file_exists($dir . $current_linecode . '/instructions/' . $value)) $data = $value; 
-			
-		else $errors[$c][$name] = $value;*/
+		
+		if ($value != '') {
+		
+			$PDFs[$current_linecode][] = $value;
+		
+			if (!file_exists($dir . $current_linecode . '/orwdb/instructions/' . $value)) $errors[$name][$value][] = $c;
+		
+		}
 		
 	}
 	
@@ -623,6 +633,42 @@ function insertFiltersByCategory() {
 
 }
 
+function cleanup($array, $type) {
+
+	global $dir;
+	
+	if (!empty($array)) {
+	
+		$linecodes = array_keys($array);
+		
+		foreach ($linecodes as $line) {
+		
+			$img_dir = $dir . $line . '/orwdb/' . $type . '/';
+			
+			if (!file_exists($dir . $line . '/orwdb/extra')) mkdir($dir . $line . '/orwdb/extra/');
+			
+			if (!file_exists($dir . $line . '/orwdb/extra/' . $type)) mkdir($dir . $line . '/orwdb/extra/' . $type);
+			
+			foreach (glob($img_dir . "*") as $file) {
+			
+				$f = basename($file);
+				
+				if (!in_array($f, $array[$line])) {
+				
+					copy($file, $dir . $line . '/orwdb/extra/' . $type . '/' . $f) or die("Error copying $type file $f");
+					
+					unlink($file);
+				
+				}
+			
+			}
+		
+		}
+	
+	}
+	
+}
+
 }
 
 {# Output
@@ -630,6 +676,8 @@ function insertFiltersByCategory() {
 function printErrors($array) { global $validFilters;
 
 	$bullets = ['Bullet Point 1', 'Bullet Point 2', 'Bullet Point 3', 'Bullet Point 4', 'Bullet Point 5'];
+	
+	$images = ['Image 1', 'Image 2', 'Image 3', 'Image 4', 'Image 5', 'Image 6', 'Image 7', 'Image 8'];
 
   foreach ($array as $type => $error) {
 	
@@ -712,6 +760,46 @@ function printErrors($array) { global $validFilters;
 			$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 		
 			$response = "$type is too long in row(s) $show<br />";
+			
+			echo $response;
+		
+		}
+
+		if (in_array($type, $images)) {
+		
+			echo "<h3>IMAGES</h3>";
+			
+			$response = '';
+			
+			foreach ($error as $image => $rows) {
+			
+				$range = implode(', ', $rows);
+				
+				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+				
+				$response .= "$image&nbsp;&nbsp;&nbsp;&nbsp; Row(s) $show<br />";
+			
+			}
+			
+			echo $response;
+		
+		}
+
+		if ($type == "Instructions") {
+		
+			echo "<h3>INSTRUCTIONS</h3>";
+			
+			$response = '';
+			
+			foreach ($error as $instructions => $rows) {
+			
+				$range = implode(', ', $rows);
+				
+				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+				
+				$response .= "$instructions&nbsp;&nbsp;&nbsp;&nbsp; Row(s) $show<br />";
+			
+			}
 			
 			echo $response;
 		
@@ -816,6 +904,10 @@ $UPCs = array();
 
 $SKUs = array();
 
+$IMGs = array();
+
+$PDFs = array();
+
 $char = 0;
 
 $current_linecode = '';
@@ -857,6 +949,8 @@ else {
 		insert($rows);
 		
 		insertFiltersByCategory();
+		
+		cleanup($IMGs, "images"); cleanup($PDFs, "instructions");
 		
 		echo 'Success! <a href="index.php">Go Home</a>';
 		
