@@ -330,13 +330,13 @@ function validateValues($name, $value, $c) {
 	}
 	
 	if (strpos($name, 'ISIS SKU') !== false) { 
+	
+		$data = $value;
 		
 		if (inISIS($value, $c)) {
 		
 			if (!array_key_exists($value, $SKUs)) {
 			
-				$data = $value; 
-		
 				$SKUs[$value][] = $c;
 		
 			}
