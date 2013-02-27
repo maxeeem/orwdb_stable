@@ -165,7 +165,7 @@ function getBrands() {
 
 	foreach ($res as $r) $db_brands[] = $r['brand'];
 
-	return $db_brands;
+	return isset($db_brands) ? $db_brands : array();
 
 }
 

@@ -69,7 +69,7 @@ function makeNav($validCategories) {
 
 		$levels = explode(".", $category);
 		
-		if (count($levels) < 2 || count($levels) > 4) exit("<p>Category $category has more than 4 levels or only top level</p>");
+		if (count($levels) < 2 || count($levels) > 4) exit("<p>Category $category has more than 4 levels or only the top level</p>");
 		
 		@$nav[$levels[0]][$levels[1]][$levels[2]][$levels[3]] = null;
 		
