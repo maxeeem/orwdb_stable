@@ -3,7 +3,7 @@
 <head>
 <script>
 
-function addOne(type, i, item) {
+function addOne(type, i, item, line) {
 var xmlhttp;
 
 item = item.replace(/&/g,'%26')
@@ -27,7 +27,7 @@ else if (type == "filter") {
 }
 
 else if (type == "brand") {	
-	xmlhttp.open("GET","admin/addOne.php?type=brand&brand="+item,true);
+	xmlhttp.open("GET","admin/addOne.php?type=brand&brand="+item+"&line="+line,true);
 }
 	
 xmlhttp.send();
@@ -293,7 +293,7 @@ function validateValues($name, $value, $c) {
 	
 	global $validBrands, $validCategories, $ISIS;
 	
-	global $errors, $dir, $current_linecode;
+	global $errors, $dir, $current_linecode, $brand_linecode;
 	
 	global $UPCs, $SKUs, $char, $IMGs, $PDFs;
 	
@@ -303,7 +303,13 @@ function validateValues($name, $value, $c) {
 		
 		if (in_array($value, $validBrands)) $data = $value; 
 		
-		else $errors[$name][$value][] = $c;
+		else { 
+		
+			$brand_linecode[$value] = $current_linecode;
+		
+			$errors[$name][$value][] = $c;
+			
+		}
 		
 	}
 	
@@ -661,7 +667,7 @@ function cleanup($array, $type) {
 
 {# Output
 
-function printErrors($array) { global $validFilters;
+function printErrors($array) { global $validFilters, $brand_linecode;
 
 	$bullets = ['Bullet Point 1', 'Bullet Point 2', 'Bullet Point 3', 'Bullet Point 4', 'Bullet Point 5'];
 	
@@ -677,11 +683,13 @@ function printErrors($array) { global $validFilters;
 		
 			foreach ($error as $name => $rows) {
 			
+				$line = $brand_linecode[$name];
+			
 				$range = implode(', ', $rows);
 				
 				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 			
-				$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('brand',$i,'$name'); return false;\">Add</a></span>";
+				$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('brand',$i,'$name','$line'); return false;\">Add</a></span>";
 		
 				$response .= " - Manufacturer [$name] does not exist in the database. Row(s) $show</div>";
 			
@@ -899,6 +907,8 @@ $PDFs = array();
 $char = 0;
 
 $current_linecode = '';
+
+$brand_linecode = array();
 
 $file = null;
 

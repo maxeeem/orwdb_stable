@@ -30,13 +30,13 @@ function addCategory($cat) {
 	
 }
 
-function addBrand($brand) {
+function addBrand($brand, $line) {
 
 	global $db;
 	
 	$brands = $db->brands;
 	
-	$brands->insert(['brand' => $brand]);
+	$brands->insert(['brand' => $brand, 'linecode' => $line]);
 	
 	echo "Done";
 	
@@ -66,7 +66,7 @@ $db = dbConnect(DBHOST, DBNAME);
 
 if ($_GET['type'] == 'category') addCategory($_GET['category']);
 
-elseif ($_GET['type'] == 'brand') addBrand($_GET['brand']);
+elseif ($_GET['type'] == 'brand') addBrand($_GET['brand'], $_GET['line']);
 
 elseif ($_GET['type'] == 'filter') addFilter($_GET['filter']);
 
