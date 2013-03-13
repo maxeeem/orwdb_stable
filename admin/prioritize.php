@@ -2,30 +2,36 @@
 <title>Prioritize Filters</title>
 <head>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
+<style>
+.ui-menu {
+  width: 300px;
+}
+</style>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 <script type="text/javascript">
 
-function showFilters(arr) {
+function showFilters(category) { if (category in window.array) {
 
-var category = document.getElementById("categories")
+	var filters = document.getElementById("filters")
 
-var now = category.options[category.selectedIndex].text
+	var values = '<h4>' + category + '</h4>'
 
-var filters = document.getElementById("filters")
+	for (var i in window.array[category]) {
 
-<!--filters.innerHTML = now-->
-var values = ""
+		values += "<li id='filter_" + i + "'>" + window.array[category][i] + "</li>"
+		
+	}
 
-for(var i in arr[now]) {
+	filters.innerHTML = values
 
-values += "<li id='filter_" + i + "'>" + arr[now][i] + "</li>"
+	$("#filters").sortable() 
 	
-}
+	$("#filters").append('<br /><input type="button" id="cancel" value="Cancel" onclick="cancel()">');
 
-filters.innerHTML = values
-
-$("#filters").sortable()
+	$("#filters").append('<input type="button" id="save" value="Save & Reload" onclick="save(\'' + category + '\')">');
+	
+	}
 
 }
 
@@ -35,27 +41,29 @@ $("#filters").sortable("cancel")
 
 }
 
-function save() {
+function save(category) {
 
 var save
 
 var newOrder = $("#filters").sortable("serialize")
 
-var category = document.getElementById("categories")
-
-var selected = category.options[category.selectedIndex].text
-
-selected = selected.replace(/&/g,'%26')
-
 save = new XMLHttpRequest()
 
 save.onreadystatechange=function() {
 
-  if (save.readyState==4 && save.status==200) window.location.reload();
+  if (save.readyState==4 && save.status==200) {
+	
+		$("#filters").html("Saved " + category.replace('%26', '&'))
+		
+		window.setTimeout("window.location.reload()", 1000)
+		
+	}
 
 }
 
-save.open("GET", "resort.php?category="+selected+"&"+newOrder, true);
+category = category.replace(/&/g,'%26')
+
+save.open("GET", "resort.php?category="+category+"&"+newOrder, true);
 
 save.send();
 
@@ -109,23 +117,37 @@ function getFilters() {
 
 }
 
-function showCategories($array) {
+function makeList($array) { global $list, $path;
 
-	$jsfilters = json_encode($array);
+	foreach (array_keys($array) as $child) { if ($child != '') {
+		
+		$path[] =  $child;
+		
+		$list .= "<li><a href='#' onclick=\"showFilters('" . implode(".", $path) . "')\">$child</a>";
 
-	$select = "<select id='categories' onchange='showFilters($jsfilters)'><option value=''>Select Category</option>";
+		if (is_array($array[$child]) && !array_key_exists('', $array[$child])) { 
+			
+			$list .= "<ul>"; makeList($array[$child]); $list .= "</ul>"; }
+			
+		$list .= "</li>"; if (count($path) > 1) $last = array_pop($path); }
 
-	foreach ($array as $category => $filters) {
-	
-		$select .= "<option value='$category'>$category</option>";
-	
 	}
-	
-	$select .= "</select>";
-	
-	echo $select;
-	
+	if (count($path) == 1) $path = null; 
 }
+
+function makeNav($categories) {
+
+	foreach ($categories as $category) {
+
+		$levels = explode(".", $category);
+		
+		if (count($levels) < 2 || count($levels) > 4) exit("<p>Category $category has more than 4 levels or only the top level</p>");
+		
+		@$nav[$levels[0]][$levels[1]][$levels[2]][$levels[3]] = null;
+		
+	}
+
+return $nav; }
 
 }
 
@@ -135,25 +157,27 @@ $db = dbConnect(DBHOST, DBNAME);
 
 $sortable = '<ul id="filters">filters go here</ul>';
 
-$cancel = '<input type="button" id="cancel" value="Cancel" onclick="cancel()">';
+$path = '';
 
-$save = '<input type="button" id="save" value="Save & Reload" onclick="save()">';
+$filters = getFilters();
+
+/*js array*/ echo "<script type='text/javascript'>array = " . json_encode($filters) . "</script>";
+
+$list = "<div id='nav'><ul id='menu'>";
 
 }
 
 {# MAiN
 
-$filters = getFilters();
-
-// var_dump($filters);
-
-showCategories($filters);
-
 echo $sortable;
 
-echo $cancel;
+$nav = makeNav(array_keys($filters));
 
-echo $save;
+makeList($nav);
+
+echo $list;
+
+echo '</ul></div><script type="text/javascript">$("#menu").menu();</script>';
 
 }
 

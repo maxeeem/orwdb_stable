@@ -46,16 +46,8 @@ $db = dbConnect(DBHOST, DBNAME);
 
 {# MAiN
 
-// addValues($_GET['filter'], $_GET['category'], $_GET['value']);
-
-if (isset($_GET['category'])) $category = $_GET['category'];
-
-if (isset($_GET['filter'])) $newOrder = $_GET['filter'];
-
-// $category = "Performance & Filters.Mufflers";
-
-// $newOrder = [1,0];
-
+if (isset($_GET['category']) && isset($_GET['filter'])) { $category = $_GET['category']; $newOrder = $_GET['filter']; }
+	
 resort($category, $newOrder);
 
 }

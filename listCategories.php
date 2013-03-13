@@ -11,6 +11,8 @@
 <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 
 </head>
+<body>
+
 <?php
 
 {# iNCLUDES
@@ -50,7 +52,7 @@ function getCategories() {
 function makeList($array) { global $list;
 
 	foreach (array_keys($array) as $child) { if ($child != '') {
-
+		
 		$list .= "<li><a href='#'>$child</a>";
 
 		if (is_array($array[$child]) && !array_key_exists('', $array[$child])) { 
@@ -58,7 +60,7 @@ function makeList($array) { global $list;
 			$list .= "<ul>"; makeList($array[$child]); $list .= "</ul>"; }
 			
 		$list .= "</li>"; }
-		
+
 	}
 	
 }
@@ -85,23 +87,23 @@ $db = dbConnect(DBHOST, DBNAME);
 
 $validCategories = getCategories();
 
+$list = "<ul id='menu'>";
+
 }
 
 {# MAiN
 
 $nav = makeNav($validCategories);
 
-$list = "<ul id='menu'>"; makeList($nav); $list .= "</ul>";
+makeList($nav);
+
+echo $list;
+
+echo '</ul><script type="text/javascript">$("#menu").menu();</script>';
 
 }
 
 ?>
-
-<body>
-
-<?php echo $list; ?>
-
-<script type="text/javascript">$("#menu").menu();</script>
 
 </body>
 </html>

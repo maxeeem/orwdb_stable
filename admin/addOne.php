@@ -70,8 +70,6 @@ elseif ($_GET['type'] == 'brand') addBrand($_GET['brand']);
 
 elseif ($_GET['type'] == 'filter') addFilter($_GET['filter']);
 
-// addValues("Finish","Suspension.Shocks", "Blue");
-
 }
 
 ?>

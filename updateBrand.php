@@ -9,13 +9,9 @@
 
 require "db/.db-info.php";
 
-require "db/.mysql.php";
-
 }
 
 {# FUNCTiONS
-
-{# Getters
 
 function dbConnect($dbhost, $dbname) {
 
@@ -52,8 +48,6 @@ function getFile() {
 	while ($row = fgetcsv($file)) $SKUs[] = $row[0];
 	
 	return $SKUs;
-
-}
 
 }
 

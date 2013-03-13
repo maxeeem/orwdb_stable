@@ -55,7 +55,6 @@ $db = dbConnect(DBHOST, DBNAME);
 {# MAiN
 
 addValues($_GET['filter'], $_GET['category'], $_GET['value']);
-// addValues("Finish","Suspension.Shocks", "Green");
 
 }
 

@@ -367,17 +367,7 @@ function validateValues($name, $value, $c) {
 	
 	if (strpos($name, 'Category') !== false) { 
 		
-		$data = $value; // no validation
-		
-		// $categories = explode('|', $value);
-		
-		// foreach ($categories as $cat) {
-		
-			// if (in_array($cat, $validCategories)) $data = $value; 
-			
-			// else $errors[$name][$cat][] = $c;
-		
-		// }
+		$data = $value; // validation done in addCategories
 		
 	}
 	
@@ -602,8 +592,6 @@ function insert($data) {
 		else $products->update(["ISIS SKU" => $row["ISIS SKU"]], $document);
 	
 	}
-	
-	// var_dump($rows);
 
 }
 
@@ -957,8 +945,6 @@ else {
 	}
 	
 	else printErrors($errors);
-	
-	
 
 }
 

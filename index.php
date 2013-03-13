@@ -6,6 +6,7 @@
 <li><a href="mongo.php">View Database</a></li>
 <li><a href="upload.php">Upload file</a></li>
 <li><a href="admin/prioritize.php">Prioritize filters</a></li>
+<li><a href="updateBrand.php">Update Manufacturer</a></li>
 <li><a href="admin/reload.php">Clear cache</li>
 </ul>
 </body>
