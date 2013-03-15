@@ -1,0 +1,275 @@
+@charset "utf-8";
+/* CSS Document */
+
+html, body, select, input {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 1em;
+}
+html, .steps-anchor, nav, nav ul {
+	width: 100%;
+}
+html {
+	background: -webkit-gradient(linear, left top, left bottom, from(#F0F0F0), to(#DADADA));
+	background: -moz-linear-gradient(top, #F0F0F0 0%, #DADADA 100%);
+	background-attachment: fixed;
+	margin-left: -1; /*disables horizontal scroll bar from adding borders on the menu*/
+	min-width: 820;
+}
+.logo-bar {
+	background-color: none;
+	z-index: 101;
+}
+body, #body-content {
+	margin: 0;
+}
+#body-margin { /*for pages with secondary body area*/
+	margin: 20px; 
+	padding-bottom: 10px;
+}
+/*=====STEPS FOR UPLOAD=====*/
+.steps-anchor {
+	text-align: center;
+	height: 60px;
+	margin-top: 30px;
+	min-width: 820;
+}
+.steps-boxes, .steps-boxes-highlighted {
+	border: none;
+	padding: 0px;
+	width: 160px;
+	color: #CCC;
+	display: inline-block;
+}
+.steps-boxes-highlighted {
+	color: #000;
+}
+.large-f { /*for large numbers on the steps*/
+	font-size: 2.5em;
+	padding: 0 8px 0 0;
+}
+/*===========NAV===========*/
+nav {
+	z-index: 100;
+	height: 30px;
+	-moz-box-shadow: 2px 2px 5px #888;
+	-webkit-box-shadow: 2px 2px 5px #888;
+}
+nav ul ul {
+	display: none;
+}
+nav ul li:hover > ul {
+	display: block;
+}
+nav ul {
+	background: #efefef;
+	background: linear-gradient(top, #828282 0%, #5C5C5C 100%);
+	background: -moz-linear-gradient(top, #828282 0%, #5C5C5C 100%);
+	background: -webkit-gradient(linear, left top, left bottom, from(#828282), to(#5C5C5C));
+	padding: 0 0px;
+	list-style: none;
+	position: relative; /*makes dropdown child links relative to the parent */
+	display: inline-table;
+	font-size: .9em;
+	border-top: #000 1px solid;
+	border-bottom: #000 1px solid;
+	margin-top: 0; /* sticks the toolbar background to the top of the page */
+	line-height: 30px; /* necessary to keep first level text the same size in the toolbar */
+	z-index: 100;
+}
+nav ul:after {
+	content: "";
+	clear: both;
+	display: block;
+}
+nav ul li {
+	float: left;
+}
+nav ul li:hover {
+	background: #c7c7c7;
+	background: linear-gradient(top, #4f5964 0%, #5f6975 40%);
+	background: -moz-linear-gradient(top, #4f5964 0%, #5f6975 40%);
+	background: -webkit-linear-gradient(top, #4f5964 0%, #5f6975 40%);
+}
+nav ul li:hover a {
+	color: #fff;
+}
+nav ul li a {
+	display: block;
+	padding: 0 30 0 30;
+	color: #fff;
+	text-decoration: none;
+	border-right: #000 1px solid;
+}
+nav ul ul {
+	background: #5f6975;
+	position: absolute;
+	width: 170px;
+	margin-left: -1;
+}
+nav ul ul li {
+	float: none;
+	background: #5f6975;
+	border-left: 1px solid #000;
+}
+nav ul ul li a {
+	padding: 0 30 0 30;
+	color: #fff;
+}
+nav ul ul li a:hover {
+	background: #4b545f;
+}
+nav ul ul ul {
+	position: absolute;
+	left: 100%;
+	top:0;
+}
+
+/*============TOOLBAR===========*/
+#reloadpos, #helpicon {
+	z-index: 101;
+	right: 100px;
+	position: absolute;
+	top: 6;
+	float: left;
+	height: 0;
+}
+#helpicon {
+	right: 48px;
+}
+.helpbar {
+	margin-top: 0;
+	background-color: #F4F4F4;
+	line-height: 2em;
+	border-bottom: 1px solid #000;
+	padding: 0 45 0 30px;
+	overflow: auto;
+	-moz-box-shadow: 2px 2px 5px #888;
+	-webkit-box-shadow: 2px 2px 5px #888;
+}
+#helptextclick {
+	text-align: center;
+	width: 90%;
+	color: #999;
+}
+#helptextclick2 { /* secondary toggle for helptext slideout */
+	text-align: right;
+	width: 100%;
+	color: #999;
+	padding-bottom: 30px;
+}
+#helptext {
+	display: none;
+	clear: both;
+}
+.continueclick {
+	right: 42;
+	background-color: #999;
+	color: #FDFDFD;
+	padding: 5 20 5 20;
+	border: 1px solid #000;
+	width: 200px;
+	text-align: center;
+	position: absolute;
+	margin: 10 0 100 0;
+	border-radius: 4px;
+}
+a.continueclick:link, a.continueclick:visited, a.continueclick:active, a.leftbuttonclick:link, a.leftbuttonclick:visited, a.leftbuttonclick:active {
+	text-decoration: none;
+	color: #FDFDFD;
+}
+.leftbuttonclick {
+	background-color: #999;
+	color: #FDFDFD;
+	padding: 5 20 5 20;
+	border: 1px solid #000;
+	text-align: center;
+	position: absolute;
+	margin: 10 0 100 0;
+	border-radius: 4px;
+}
+/*============OTHER=============*/
+
+.ui-menu { /*size of the custom menu browser */
+	width: 230px;
+}
+.menubrowse { /* fixes the browsing menus (categories/filters)*/
+	position: absolute;
+	left: 470px;
+}
+.catb {
+	padding: 0 0 10px 0;
+}
+#edit, #filters { /* fixes the browsing menus (categories/filters)*/
+	width: 400px;
+	position: absolute;
+	background: #fff;
+	padding: 10px;
+	margin: 0;
+	border-radius: 4px;
+	border: 1px solid #999;
+	z-index: 50;
+}
+filter-bullets {
+	text-indent: 50px;
+}
+.indexsquares {
+	width: 300px;
+	height: 160px;
+	border-radius: 4px;
+	border: 1px solid #999;
+	background: -webkit-gradient(linear, left top, left bottom, from(#E0E0E0), to(#D2D2D2));
+	display: inline-block;
+	text-align: center;
+	margin: 20px;
+}
+.addbutton {
+	padding: 3 10 3 10;
+	border: 1px solid #000;
+	border-radius: 2px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#999), to(#666));
+	line-height: 3em;
+	color: #fff;
+	margin-left: 10px;
+}
+a.addbutton:link, a.addbutton:visited, a.addbutton:active {
+	text-decoration: none;
+	color: #fff;
+}
+.addbutton:hover {
+	background: -webkit-gradient(linear, left top, left bottom, from(#999), to(#CACACA));
+	color: #fff;
+}
+.highlightblock:hover {
+	/*background: #F3F3F3;*/
+	background: #F9F9F9;
+}
+
+.ui-widget-content-white {
+	border: 1px solid #aaaaaa/*{borderColorContent}*/;
+	background: #fff/*{bgColorContent}*/ url(images/ui-bg_flat_75_ffffff_40x100.png)/*{bgImgUrlContent}*/ 50%/*{bgContentXPos}*/ 50%/*{bgContentYPos}*/ repeat-x/*{bgContentRepeat}*/;
+	color: #fff/*{fcContent}*/;
+}
+a:link, a:visited, a:hover {
+	text-decoration: none;
+}
+.hidden {
+	display: none;
+}
+.displayed {
+	display:block;
+}
+select {
+	border: 1px solid #666;
+	border-radius: 4px;
+	padding: 2 4 2 10;
+	width: 200px;
+}
+.optionsc {
+	padding: 0 10 12 0;
+	width: 200px;
+	float: left;
+}
+#notes {
+	clear: both;
+}
+	

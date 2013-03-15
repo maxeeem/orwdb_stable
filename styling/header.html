@@ -1,0 +1,35 @@
+<?php $p_a = ($p == '') ? 'admin/' : ''; ?>
+<nav>
+	<ul>
+		<li><a href="<?php echo $p; ?>index.php"><div class="logo-bar"><img src="<?php echo $p; ?>styling/images/orw-logo3.png"/></div></a>
+        </li>
+        <li><a href="#">File</a>
+        <ul>
+				<li><a href="<?php echo $p; ?>upload.php">Upload</a></li>
+				<li><a href="<?php echo $p; ?>export.php">Export</a></li>
+                <li><a href="<?php echo $p; ?>updateBrand.php">Update</a></li>
+		</ul>
+        </li>
+		<li><a href="#">Assign</a>
+        <ul>
+				<li><a href="<?php echo $p_a; ?>assignCategories.php">Categories</a></li>
+				<li><a href="<?php echo $p_a; ?>prioritize.php">Filters</a></li>
+                <li><a href="uploadVehicles.php">Compatibility</a></li>
+		</ul>
+		</li>
+        <li><a href="#">Database</a>
+			<ul>
+				<li><a href="http://172.16.1.157:81/orwdb/mongo.php/">Mongo</a></li>
+                <li><a href="#" title="See removed or changed information in the database">Changed Log</a></li>
+			</ul>
+        </li>  
+		<!--<li><a href="#">Help</a>
+			<ul>
+				<li><a href="#">Call Max</a></li>
+			</ul>
+        </li>-->
+	</ul>
+</nav>
+<div class='helpbar'><div id='helptext'>help text<div id='helptextclick2'>&uarr;&emsp;Show less&emsp;&uarr;</div></div></div>
+<div id="reloadpos"><a href="#" title="Start Over" onclick="reload()"><img src="<?php echo $p; ?>styling/images/reload-icon-sm.png"/></a></div>
+<div id="helpicon"><a href="#" title="Help Info"><img src="<?php echo $p; ?>styling/images/help-icon-sm.png"/></a></div>

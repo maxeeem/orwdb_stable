@@ -1,13 +1,22 @@
 <html>
 <title>Update Manufacturer</title>
-<head></head>
+<head>
+
+<?php $p = ""; require($p . "styling/header-script.php"); ?>
+
+</head>
+
 <body>
 
 <?php
 
 {# iNCLUDES
 
+require "styling/header.html"; 
+
 require "db/.db-info.php";
+
+require "db/.mysql.php";
 
 }
 
@@ -19,13 +28,9 @@ function dbConnect($dbhost, $dbname) {
 	
 	$db = $m->$dbname;
 	
-	return $db;
+return $db; }
 
-}
-
-function getSKUs() {
-
-	global $db, $brand;
+function getSKUs() { global $db, $brand;
 	
 	$products = $db->products;
 	
@@ -33,13 +38,9 @@ function getSKUs() {
 
 	foreach ($res as $r) $SKUs[] = $r['ISIS SKU'];
 
-	return isset($SKUs) ? $SKUs : array();
+return isset($SKUs) ? $SKUs : array(); }
 
-}
-
-function getFile() {
-	
-	global $brand;
+function getFile() { global $brand;
 	
 	$file = fopen($_FILES['userfile']['tmp_name'], "r");
 	
@@ -47,24 +48,18 @@ function getFile() {
 	
 	while ($row = fgetcsv($file)) $SKUs[] = $row[0];
 	
-	return $SKUs;
-
-}
+return $SKUs; }
 
 }
 
 {# VARiABLES
 
 $form = <<<EOT
-				<br />
-				<center><h2>Choose file to upload</h2>
-				<br />
 				<form enctype="multipart/form-data" action="{$_SERVER['PHP_SELF']}" method="POST">
 				<input type="hidden" name="MAX_FILE_SIZE" value="200000000" />
 				<input name="userfile" type="file" />
 				<input type="submit" value="Submit" />
 				</form>
-				</center>
 EOT;
 
 $brand = null;
@@ -74,6 +69,8 @@ $db = dbConnect(DBHOST, DBNAME);
 }
 
 {# MAiN
+
+echo "<div id='body-margin'>";
 
 if (empty($_FILES)) echo $form;
 
@@ -89,13 +86,11 @@ else {
 	
 	if (!empty($add)) { echo "<h3>To Add</h3>"; foreach ($add as $a) echo $a . "</br>"; }
 	
-	if (!empty($remove)) { echo "<h3>To Remove</h3>"; foreach ($remove as $r) echo $r . "</br>"; }
-	
-}
+	if (!empty($remove)) { echo "<h3>To Remove</h3>"; foreach ($remove as $r) echo $r . "</br>"; } }
 
 }
 
 ?>
-
+</div>
 </body>
 </html>

@@ -1,81 +1,70 @@
 <html>
 <title>Prioritize Filters</title>
 <head>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
-<style>
-.ui-menu {
-  width: 300px;
-}
-</style>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+
+<?php $p = "../"; require($p . "styling/header-script.php"); ?>
+
 <script type="text/javascript">
 
-function showFilters(category) { if (category in window.array) {
+function showFilters(category) { 
 
-	var filters = document.getElementById("filters")
-
-	var values = '<h4>' + category + '</h4>'
-
-	for (var i in window.array[category]) {
-
-		values += "<li id='filter_" + i + "'>" + window.array[category][i] + "</li>"
+	if (category in window.array) {
 		
-	}
+		$("#selectedCat").html(category.bold())
+		
+		var values = ''
 
-	filters.innerHTML = values
+		for (var i in window.array[category]) values += "<li style='list-style-type: none;' id='filter_" + i + "'>" + window.array[category][i] + "</li>"
 
-	$("#filters").sortable() 
-	
-	$("#filters").append('<br /><input type="button" id="cancel" value="Cancel" onclick="cancel()">');
+		$("#filters").html(values)
 
-	$("#filters").append('<input type="button" id="save" value="Save & Reload" onclick="save(\'' + category + '\')">');
-	
-	}
+		$("#filters").sortable() 
+		
+		$("#filters").append('<br /><input type="button" id="cancel" value="Cancel" onclick="cancel()">')
 
-}
+		$("#filters").append('<input type="button" id="save" value="Save & Reload" onclick="save(\'' + category + '\')">') }
+
+return 1 }
 
 function cancel() {
 
-$("#filters").sortable("cancel")
+	$("#filters").sortable("cancel")
 
-}
+return 1 }
 
 function save(category) {
 
-var save
+	var save
 
-var newOrder = $("#filters").sortable("serialize")
+	var newOrder = $("#filters").sortable("serialize")
 
-save = new XMLHttpRequest()
+	save = new XMLHttpRequest()
 
-save.onreadystatechange=function() {
-
-  if (save.readyState==4 && save.status==200) {
-	
-		$("#filters").html("Saved " + category.replace('%26', '&'))
+	save.onreadystatechange=function() { if (save.readyState==4 && save.status==200) {
 		
-		window.setTimeout("window.location.reload()", 1000)
-		
-	}
+			$("#filters").html("Saved " + category.replace('%26', '&'))
+			
+			window.setTimeout("window.location.reload()", 1500) } }
 
-}
+	category = category.replace(/&/g,'%26')
 
-category = category.replace(/&/g,'%26')
+	save.open("GET", "resort.php?category="+category+"&"+newOrder, true)
 
-save.open("GET", "resort.php?category="+category+"&"+newOrder, true);
+	save.send()
 
-save.send();
-
-}
+return 1 }
 
 </script>
+
 </head>
+
 <body>
 
 <?php
 
 {# iNCLUDES
+
+require $p . "styling/header.html"; 
 
 require "../db/.db-info.php";
 
@@ -89,63 +78,43 @@ function dbConnect($dbhost, $dbname) {
 	
 	$db = $m->$dbname;
 	
-	return $db;
+return $db; }
 
-}
-
-function getFilters() {
-
-	global $db;
+function getFilters() { global $db;
 	
 	$categories = $db->categories;
 	
 	$res = $categories->find();
 	
-	foreach ($res as $rows) { 
-		
-		if (array_key_exists('filters', $rows) && count($rows['filters']) > 1) {
-			
-			$filtersByCategory[$rows['orw']] = $rows['filters'];
-			
-		}
-
-	}
+	foreach ($res as $rows) { if (array_key_exists('filters', $rows) && count($rows['filters']) > 1) { 
+	
+		$filtersByCategory[$rows['orw']] = $rows['filters']; } }
 
 	ksort($filtersByCategory);
 	
-	return $filtersByCategory;
-
-}
+return $filtersByCategory; }
 
 function makeList($array) { global $list, $path;
 
-	foreach (array_keys($array) as $child) { if ($child != '') {
-		
-		$path[] =  $child;
+	foreach (array_keys($array) as $child) { if ($child != '') { $path[] =  $child;
 		
 		$list .= "<li><a href='#' onclick=\"showFilters('" . implode(".", $path) . "')\">$child</a>";
 
-		if (is_array($array[$child]) && !array_key_exists('', $array[$child])) { 
+		if (is_array($array[$child]) && !array_key_exists('', $array[$child])) { $list .= "<ul>"; makeList($array[$child]); $list .= "</ul>"; }
 			
-			$list .= "<ul>"; makeList($array[$child]); $list .= "</ul>"; }
-			
-		$list .= "</li>"; if (count($path) > 1) $last = array_pop($path); }
-
-	}
+		$list .= "</li>"; if (count($path) > 1) $last = array_pop($path); } }
+		
 	if (count($path) == 1) $path = null; 
-}
+
+return 1; }
 
 function makeNav($categories) {
 
-	foreach ($categories as $category) {
-
-		$levels = explode(".", $category);
+	foreach ($categories as $category) { $levels = explode(".", $category);
 		
 		if (count($levels) < 2 || count($levels) > 4) exit("<p>Category $category has more than 4 levels or only the top level</p>");
 		
-		@$nav[$levels[0]][$levels[1]][$levels[2]][$levels[3]] = null;
-		
-	}
+		@$nav[$levels[0]][$levels[1]][$levels[2]][$levels[3]] = null; }
 
 return $nav; }
 
@@ -155,33 +124,36 @@ return $nav; }
 
 $db = dbConnect(DBHOST, DBNAME);
 
-$sortable = '<ul id="filters">filters go here</ul>';
+$sortable = '<div id="selectedCat"></div><div id="filtersbox"><ul id="filters">Please select a filter category.</ul></div>';
 
-$path = '';
+$path = null;
 
-$filters = getFilters();
-
-/*js array*/ echo "<script type='text/javascript'>array = " . json_encode($filters) . "</script>";
-
-$list = "<div id='nav'><ul id='menu'>";
+$margin = "<div id='body-margin'>";
 
 }
 
 {# MAiN
 
+echo $margin;
+
 echo $sortable;
+
+$filters = getFilters();
+
+echo "<script type='text/javascript'>array = " . json_encode($filters) . "</script>";
 
 $nav = makeNav(array_keys($filters));
 
-makeList($nav);
+$list = "<ul id='menu' class='menubrowse'>"; makeList($nav); $list .= "</ul>";
 
 echo $list;
 
-echo '</ul></div><script type="text/javascript">$("#menu").menu();</script>';
+echo '<script type="text/javascript">$("#menu").menu();</script>';
 
 }
 
 ?>
 
+</div>
 </body>
 </html>

@@ -14,13 +14,9 @@ function dbConnect($dbhost, $dbname) {
 	
 	$db = $m->$dbname;
 	
-	return $db;
+return $db; }
 
-}
-
-function resort($category, $newOrder) {
-
-	global $db;
+function resort($category, $newOrder) { global $db;
 	
 	$categories = $db->categories;
 	
@@ -34,7 +30,7 @@ function resort($category, $newOrder) {
 	
 	echo "Saved";
 
-}
+return 1; }
 
 }
 
@@ -46,8 +42,16 @@ $db = dbConnect(DBHOST, DBNAME);
 
 {# MAiN
 
-if (isset($_GET['category']) && isset($_GET['filter'])) { $category = $_GET['category']; $newOrder = $_GET['filter']; }
-	
+// addValues($_GET['filter'], $_GET['category'], $_GET['value']);
+
+if (isset($_GET['category'])) $category = $_GET['category'];
+
+if (isset($_GET['filter'])) $newOrder = $_GET['filter'];
+
+// $category = "Performance & Filters.Mufflers";
+
+// $newOrder = [1,0];
+
 resort($category, $newOrder);
 
 }

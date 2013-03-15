@@ -14,13 +14,9 @@ function dbConnect($dbhost, $dbname) {
 	
 	$db = $m->$dbname;
 	
-	return $db;
+return $db; }
 
-}
-
-function addCategory($cat) {
-
-	global $db;
+function addCategory($cat) { global $db;
 	
 	$categories = $db->categories;
 	
@@ -28,23 +24,19 @@ function addCategory($cat) {
 	
 	echo "Done";
 	
-}
+return 1; }
 
-function addBrand($brand, $line) {
-
-	global $db;
+function addBrand($brand) { global $db;
 	
 	$brands = $db->brands;
 	
-	$brands->insert(['brand' => $brand, 'linecode' => $line]);
+	$brands->insert(['brand' => $brand]);
 	
 	echo "Done";
 	
-}
+return 1; }
 
-function addFilter($filter) {
-
-	global $db;
+function addFilter($filter) { global $db;
 	
 	$filters = $db->filters;
 
@@ -52,7 +44,7 @@ function addFilter($filter) {
 	
 	echo "Done";
 	
-}
+return 1; }
 
 }
 
@@ -66,9 +58,11 @@ $db = dbConnect(DBHOST, DBNAME);
 
 if ($_GET['type'] == 'category') addCategory($_GET['category']);
 
-elseif ($_GET['type'] == 'brand') addBrand($_GET['brand'], $_GET['line']);
+elseif ($_GET['type'] == 'brand') addBrand($_GET['brand']);
 
 elseif ($_GET['type'] == 'filter') addFilter($_GET['filter']);
+
+// addValues("Finish","Suspension.Shocks", "Blue");
 
 }
 

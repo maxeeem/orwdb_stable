@@ -1,96 +1,131 @@
 <html>
-<title>ORW DB</title>
+<title>Upload File</title>
 <head>
-<script>
+
+<?php $p = ""; require("styling/header-script.php"); ?>
+
+<script type="text/javascript">
+
+function makeTabs(tabs) {
+
+	nav = document.getElementById('tabs-list')
+
+	nav.innerHTML = '<ul>' + tabs + '</ul>'
+	
+return 1 }
 
 function addOne(type, i, item, line) {
-var xmlhttp;
-
-item = item.replace(/&/g,'%26')
-
-xmlhttp=new XMLHttpRequest();
-
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-    document.getElementById("add"+i).innerHTML=xmlhttp.responseText;
-    }
-  }
-
-if (type == "category") {	
-	xmlhttp.open("GET","admin/addOne.php?type=category&category="+item,true);
-}
-
-else if (type == "filter") {	
-	xmlhttp.open("GET","admin/addOne.php?type=filter&filter="+item,true);
-}
-
-else if (type == "brand") {	
-	xmlhttp.open("GET","admin/addOne.php?type=brand&brand="+item+"&line="+line,true);
-}
 	
-xmlhttp.send();
-}
+	var xmlhttp
+	
+	item = item.replace(/&/g,'%26')
+
+	xmlhttp = new XMLHttpRequest()
+
+	xmlhttp.onreadystatechange = function() {
+  
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+		
+			var done = "<a class='addbutton' style='color:#fff'>"+xmlhttp.responseText+"</a>"
+			
+			document.getElementById("add"+i).innerHTML = done
+    
+		}
+  
+	}
+
+	if (type == "category") xmlhttp.open("GET","admin/addOne.php?type=category&category="+item,true)
+
+	else if (type == "filter") xmlhttp.open("GET","admin/addOne.php?type=filter&filter="+item,true)
+
+	else if (type == "brand") xmlhttp.open("GET","admin/addOne.php?type=brand&brand="+item+"&line="+line,true)
+	
+	xmlhttp.send()
+
+return 1 }
 
 function addFilterValues(i, a, arr0, arr1) {
-var xmlhttp;
 
-a = a.replace(/&/g,'%26')
-arr0 = arr0.replace(/&/g,'%26')
-arr1 = arr1.replace(/&/g,'%26')
+	var xmlhttp
 
-xmlhttp=new XMLHttpRequest();
-
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-    document.getElementById("add"+i).innerHTML=xmlhttp.responseText;
-    }
-  }
+	a = a.replace(/&/g,'%26')
 	
-xmlhttp.open("GET","admin/addFilterValues.php?filter="+a+"&category="+arr0+"&value="+arr1,true);
+	arr0 = arr0.replace(/&/g,'%26')
+	
+	arr1 = arr1.replace(/&/g,'%26')
 
-xmlhttp.send();
-}
+	xmlhttp = new XMLHttpRequest()
 
-function listCategories(categories) {
+	xmlhttp.onreadystatechange = function() {
+	
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+		
+			var done = "<a class='addbutton' style='color:#fff'>"+xmlhttp.responseText+"</a>"
+			
+			document.getElementById("add"+i).innerHTML = done
+    
+		}
+  
+	}
+	
+	xmlhttp.open("GET","admin/addFilterValues.php?filter="+a+"&category="+arr0+"&value="+arr1,true)
 
-var categories = '<h3>See <a href=\'javascript:popup("listCategories.php")\'>categories</a> already in the database.&nbsp;&nbsp;&nbsp;<input type="button" value="Reload" onclick="reload()"></h3><hr>'
+	xmlhttp.send()
 
-document.getElementById("top").innerHTML = categories
+return 1 }
 
-}
+function listCategories() {
+
+	var xmlhttp
+
+	xmlhttp = new XMLHttpRequest()
+
+	xmlhttp.onreadystatechange = function() {
+	
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    
+			document.getElementById("dialog").innerHTML = xmlhttp.responseText
+			
+			$("#catbrowser").menu()
+    
+		}
+  
+	}
+	
+	xmlhttp.open("GET","listCategories.php",true)
+
+	xmlhttp.send()
+
+return 1 }
+
+function highlightStep(step) {
+
+	$("#"+step).removeClass("steps-boxes").addClass("steps-boxes-highlighted")
+
+return 1 }
 
 function reload() {
-var reload;
+	
+	var xmlhttp
 
-reload = new XMLHttpRequest();
+	xmlhttp = new XMLHttpRequest()
 
-reload.onreadystatechange=function()
-{
-  if (reload.readyState==4 && reload.status==200)
-  {
-    window.location.href="upload.php";
-  }
-}
+	xmlhttp.onreadystatechange = function() {
+	
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) window.location.href = "upload.php"
 
-reload.open("GET", "admin/reload.php?standalone=false", true);
+	}
 
-reload.send();
-}
+	xmlhttp.open("GET", "admin/reload.php?standalone=false", true)
 
-function popup(url) {
+	xmlhttp.send()
 
-var popup = window.open(url, 'Categories', 'height=700,width=640');
-
-if (window.focus) {popup.focus()}
-
-}
+return 1 }
 
 </script>
+
 </head>
+
 <body>
 
 <?php
@@ -101,11 +136,15 @@ require "db/.db-info.php";
 
 require "db/.mysql.php";
 
+require "styling/header.html"; 
+
+require "styling/steps.html";
+
 }
 
 {# FUNCTiONS
 
-{# Getters
+{# --Getters
 
 function dbConnect($dbhost, $dbname) {
 
@@ -113,23 +152,17 @@ function dbConnect($dbhost, $dbname) {
 	
 	$db = $m->$dbname;
 	
-	return $db;
+return $db; }
 
-}
-
-function getFile() {
-
-	global $file;
+function getFile() { global $file;
 
 	if (!file_exists("files/file.csv")) copy($_FILES['userfile']['tmp_name'], "files/file.csv");
 	
 	$file = fopen("files/file.csv", "r");
 
-}
+return 1; }
 
-function getFilters() {
-
-	global $db;
+function getFilters() { global $db;
 	
 	$filters = $db->filters;
 	
@@ -139,25 +172,13 @@ function getFilters() {
 		
 		if (array_key_exists('values', $rows)) {
 		
-			foreach ($rows['values'] as $r) {
-			
-				$dbfilters[$rows['name']][$r['category']] = $r['values'];
-			
-			}
-
-		}
+			foreach ($rows['values'] as $r) $dbfilters[$rows['name']][$r['category']] = $r['values']; }
 		
-		else $dbfilters[$rows['name']] = array();
-		
-	}
+		else $dbfilters[$rows['name']] = array();	}
 
-	return isset($dbfilters) ? $dbfilters : array();
+return isset($dbfilters) ? $dbfilters : array(); }
 
-}
-
-function getBrands() {
-
-	global $db;
+function getBrands() { global $db;
 	
 	$brands = $db->brands;
 	
@@ -165,13 +186,9 @@ function getBrands() {
 
 	foreach ($res as $r) $db_brands[] = $r['brand'];
 
-	return isset($db_brands) ? $db_brands : array();
+return isset($db_brands) ? $db_brands : array(); }
 
-}
-
-function getCategories() {
-
-	global $db;
+function getCategories() { global $db;
 	
 	$categories = $db->categories;
 	
@@ -179,25 +196,17 @@ function getCategories() {
 
 	foreach ($res as $r) $db_categories[] = $r['orw'];
 
-	return isset($db_categories) ? $db_categories : array();
+return isset($db_categories) ? $db_categories : array(); }
 
-}
-
-function getHeaders() {
-
-	global $db;
+function getHeaders() { global $db;
 	
 	$headers = $db->headers;
 	
 	$res = $headers->findOne();
 
-	return $res['headers'];
+return $res['headers']; }
 
-}
-
-function getISIS($line) {
-
-	global $mysqli;
+function getISIS($line) { global $mysqli;
 
 	$search = "SELECT * FROM `table 1` WHERE `LineCode` = '" . $line . "'";
 
@@ -207,13 +216,9 @@ function getISIS($line) {
 	
 	while ($row = $res->fetch_assoc()) $ISIS[$row['Part Number']][] = $row;
 	
-	return $ISIS;
+return $ISIS; }
 
-}
-
-function processRows($file) {
-
-	global $headers, $rows;
+function processRows($file) { global $headers, $rows;
 	
 	$c = 2;
 
@@ -225,33 +230,25 @@ function processRows($file) {
 			
 			elseif (array_key_exists($i, $headers['filters'])) {
 			
-				if ($datum != '')	$filter[$headers['filters'][$i]] = validateFilters($data['Category'], $headers['filters'][$i], $datum, $c);
+				if ($datum != '')	$filter[$headers['filters'][$i]] = validateFilters($data['Category'], $headers['filters'][$i], $datum, $c); }
 			
-			}
-			
-			else exit("<small>Unrecognized columns in row {$c}.</small>");
-		
-		}
+			else exit("<small>Unrecognized columns in row {$c}.</small>"); }
 		
 		$rows['rows'][$c] = $data;
 		
 		$rows['filters'][$c] = $filter;
 		
-		$c++;
-
-	}
+		$c++; }
 	
-	fclose($file);
+	fclose($file); 
+	
+return 1; }
 
 }
 
-}
+{# --Validators
 
-{# Validators
-
-function inISIS($sku, $c) {
-
-	global $ISIS, $current_linecode;
+function inISIS($sku, $c) { global $ISIS, $current_linecode;
 
 	$line = substr($sku, 0, 3);
 
@@ -263,13 +260,9 @@ function inISIS($sku, $c) {
 	
 	$current_linecode = $line;
 	
-	return (array_key_exists($pn, $ISIS[$line])) ? true : false;
-	
-}
+return (array_key_exists($pn, $ISIS[$line])) ? true : false; }
 
-function validateHeaders($array) {
-
-	global $headers, $validHeaders, $validFilters;
+function validateHeaders($array) { global $headers, $validHeaders, $validFilters;
 	
 	$headers = $validHeaders;
 	
@@ -279,15 +272,13 @@ function validateHeaders($array) {
 	
 		elseif (!array_key_exists($arr, $validFilters)) $new[] = $arr; 
 		
-		else $headers['filters'][$a] = $arr;
-	
-	} 
+		else $headers['filters'][$a] = $arr; } 
 	
 	if (!empty($err)) printErrors($err);
 	
 	if (!empty($new)) addFilters($new);
 
-}
+return 1; }
 
 function validateValues($name, $value, $c) {
 	
@@ -303,93 +294,41 @@ function validateValues($name, $value, $c) {
 		
 		if (in_array($value, $validBrands)) $data = $value; 
 		
-		else { 
-		
-			$brand_linecode[$value] = $current_linecode;
-		
-			$errors[$name][$value][] = $c;
-			
-		}
-		
-	}
+		else { $brand_linecode[$value] = $current_linecode;	$errors[$name][$value][] = $c; } }
 	
 	if ((strpos($name, 'UPC') !== false) && !empty($value)) { 
 		
 		if (is_numeric($value) && (strlen($value) == 12)) {
 		
-			if (!array_key_exists($value, $UPCs)) {
+			if (!array_key_exists($value, $UPCs)) { $data = $value;	$UPCs[$value][] = $c;	}
 			
-				$data = $value;
+			else { $UPCs[$value][] = $c; $errors[$name][$value] = $UPCs[$value]; } }
 		
-				$UPCs[$value][] = $c;
-		
-			}
-			
-			else {
-			
-				$UPCs[$value][] = $c;
-			
-				$errors[$name][$value] = $UPCs[$value];
-		
-			}
-		
-		}
-		
-		else $errors[$name][$value][] = $c;
-		
-	}
+		else $errors[$name][$value][] = $c;	}
 	
-	if (strpos($name, 'ISIS SKU') !== false) { 
-	
-		$data = $value;
+	if (strpos($name, 'ISIS SKU') !== false) { $data = $value;
 		
 		if (inISIS($value, $c)) {
 		
-			if (!array_key_exists($value, $SKUs)) {
+			if (!array_key_exists($value, $SKUs)) $SKUs[$value][] = $c;
 			
-				$SKUs[$value][] = $c;
+			else { $SKUs[$value][] = $c; $errors[$name][$value] = $SKUs[$value]; } }
 		
-			}
-			
-			else {
-			
-				$SKUs[$value][] = $c;
-				
-				$errors[$name][$value] = $SKUs[$value];
-			
-			}
-		
-		}
-		
-		else $errors[$name][$value][] = $c;
-		
-	}	
+		else $errors[$name][$value][] = $c;	}	
 
-	if (strpos($name, 'Part Name') !== false) { 
-		
-		$data = $value; // no validation
-		
-	}
+	if (strpos($name, 'Part Name') !== false) $data = $value; // no validation
 	
-	if (strpos($name, 'Category') !== false) { 
-		
-		$data = $value; // validation done in addCategories
-		
-	}
+	if (strpos($name, 'Category') !== false) $data = $value; // validation done in addCategories
 	
 	if (strpos($name, 'Bullet Point') !== false) { 
 		
 		if (strlen($value) <= 200) $data = $value; 
 		
-		else $errors[$name][] = $c;
-		
-	}
+		else $errors[$name][] = $c;	}
 
-	if (strpos($name, 'Description') !== false) { 
+	if (strpos($name, 'Description') !== false) { $data = $value;
 	
 		$char += strlen($value);
-		
-		$data = $value;
 		
 		$n = explode(' ', $name);
 		
@@ -397,47 +336,23 @@ function validateValues($name, $value, $c) {
 		
 			if ($char >= 1500) { $errors['Description'][] = $c; $char = 0; }
 			
-			else $char = 0;
-			
-		}
-		
-	}
+			else $char = 0;	} }
 
-	if (strpos($name, 'Image') !== false) { 
+	if (strpos($name, 'Image') !== false) { $data = $value;
 		
-		$data = $value;
+		if ($value != '') {	$IMGs[$current_linecode][] = $value;
 		
-		if ($value != '') {
-		
-			$IMGs[$current_linecode][] = $value;
-		
-			if (!file_exists($dir . $current_linecode . '/orwdb/images/' . $value)) $errors[$name][$value][] = $c;
-		
-		}
-		
-	}
+			/*if (!file_exists($dir . $current_linecode . '/orwdb/images/' . $value)) $errors[$name][$value][] = $c; //comment out the skip images check*/ } }
 
-	if (strpos($name, 'Instructions') !== false) { 
+	if (strpos($name, 'Instructions') !== false) { $data = $value;
 		
-		$data = $value;
+		if ($value != '') { $PDFs[$current_linecode][] = $value;
 		
-		if ($value != '') {
-		
-			$PDFs[$current_linecode][] = $value;
-		
-			if (!file_exists($dir . $current_linecode . '/orwdb/instructions/' . $value)) $errors[$name][$value][] = $c;
-		
-		}
-		
-	}
+			if (!file_exists($dir . $current_linecode . '/orwdb/instructions/' . $value)) $errors[$name][$value][] = $c; } }
 	
-	return $data;
+return $data; }
 
-}
-
-function validateFilters($category, $name, $value, $c) {
-
-	global $validFilters, $errors;
+function validateFilters($category, $name, $value, $c) { global $validFilters, $errors;
 	
 	$data = 'invalid';
 	
@@ -447,29 +362,21 @@ function validateFilters($category, $name, $value, $c) {
 		
 		if (array_key_exists($cat, $validFilters[$name]) && in_array($value, $validFilters[$name][$cat])) $data = $value;
 		
-		else $errors['Filters'][$name][$value][$cat][] = $c;
+		else $errors['Filters'][$name][$value][$cat][] = $c; }
 	
-	}
-	
-	return $data;
+return $data; }
 
 }
 
-}
+{# --Admin
 
-{# Admin
-
-function addFilters($array) {
-
-	global $validFilters;
-
-	$i = 0;
+function addFilters($array) {	global $validFilters;
 	
-	$filters = $validFilters;
+	$filters = $validFilters; ksort($filters);
 	
-	ksort($filters);
+	echo "<script language='javascript'>highlightStep('step3')</script>";
 	
-	$select = "<div style='text-align: center;'><select id='filters'><option>Filters in the database</option>";
+	$select = "<p><select id='filters_N'><option>Filters in the database</option>";
 	
 	$select_T = "<select id='filters_T'><option>Title Filters</option>";
 	
@@ -477,107 +384,73 @@ function addFilters($array) {
 	
 		if (strpos($name, "T_") === false) $select .= "<option>$name</option>";
 		
-		else $select_T .= "<option>$name</option>";
-	
-	}
+		else $select_T .= "<option>$name</option>"; }
 	
 	echo $select . "</select>";
 	
-	echo $select_T . "</select></div>";
-	
-	foreach ($array as $arr) {
-		
-		$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('filter',$i,'$arr'); return false;\">Add</a></span>";
-		
-		$response .= " - $arr</div>";
-	
-		$i++;
-	
-		echo $response;
-	
-	}
-	
-	echo '<br /><a href="upload.php">Continue</a>';
-	
-	exit();
-
-}
-
-function addCategories($file) {
-
-	global $validCategories;
-
-	$add = false;
-	
-	$skip = fgetcsv($file);
-	
-	$e = 2;
-	
-	while ($row = fgetcsv($file)) {
-	
-		if (empty($row[4])) $empty[] = $e;
-	
-		else {
-		
-			if (strpos($row[4], "|") !== false) {
-			
-				$cats = explode('|', $row[4]);
-				
-				foreach ($cats as $single_cat) $categories[] = $single_cat;
-			
-			}
-			
-			else $categories[] = $row[4];
-	
-		}
-	
-		$e++;
-	
-	}
-	
-	rewind($file);
-	
-	if (!empty($empty)) { $rows = implode(',', $empty); exit("Rows $rows are empty or missing category values<br/><input type='button' value='Reload' onclick='reload()'>"); }
+	echo $select_T . "</select></p>";
 	
 	$i = 0;
 	
-	echo '<div id="top"></div>';
+	foreach ($array as $arr) {
+		
+		$response = "<hr><div class='highlighblock' style=\"line-height: 1.5em;\"><span id=\"add$i\"><a class='addbutton' href=\"#\" onclick=\"addOne('filter',$i,'$arr'); return false;\">Add</a></span>";
+		
+		$response .= " $arr</div>";
+	
+		echo $response;	$i++; }
+	
+	echo '<a class="continueclick" href="upload.php">Continue</a>';
+	
+exit(); }
+
+function addCategories($file) { global $validCategories;
+
+	$add = false; $skip = fgetcsv($file); $e = 2;
+	
+	while ($row = fgetcsv($file)) { if (empty($row[4])) $empty[] = $e; else { 
+		
+		if (strpos($row[4], "|") !== false) { $cats = explode('|', $row[4]);
+		
+			foreach ($cats as $one_cat) $categories[] = $one_cat; }
+		
+		else $categories[] = $row[4]; }
+	
+		$e++; }
+	
+	rewind($file);
+	
+	if (!empty($empty)) { $rows = implode(',', $empty); 
+		
+		exit("Rows $rows are empty or missing category values<br/><input type='button' value='Reload' onclick='reload()'>"); }
 	
 	sort($categories);
 	
-	foreach (array_unique($categories) as $cat) {
+	$i = 0;
 	
-		if (!in_array($cat, $validCategories)) {
+	foreach (array_unique($categories) as $cat) { if (!in_array($cat, $validCategories)) {
 		
-			$add = true;
-			
-			$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('category',$i,'$cat'); return false;\">Add</a></span>";
+		$add = true;
 		
-			$response .= " - $cat</div>";
+		$response = "<div class='highlightblock'><span id=\"add$i\"><a class='addbutton' href=\"#\" onclick=\"addOne('category',$i,'$cat'); return false;\">Add</a></span>";
 		
-			$i++;
+		$response .= " $cat</div>";
 		
-			echo $response;
-		
-		}
-	
-	}
+		echo $response; $i++; } }
 	
 	if ($add) {
 		
 		echo "<script language='javascript'>listCategories()</script>";
 		
-		echo '<hr><a href="upload.php">Continue</a>';
+		echo "<script language='javascript'>highlightStep('step2')</script>";
+		
+		echo '<a class="continueclick" href="upload.php">Continue</a>';
+		
+		exit(); }
 
-		exit();
+return 1; }
 
-	}
-	
-}
-
-function insert($data) {
-	
-	global $db;
+function insert($data) { global $db;
 	
 	$products = $db->products;
 	
@@ -595,15 +468,11 @@ function insert($data) {
 		
 		if (empty($SKU)) $products->insert($document);
 		
-		else $products->update(["ISIS SKU" => $row["ISIS SKU"]], $document);
-	
-	}
+		else $products->update(["ISIS SKU" => $row["ISIS SKU"]], $document); }
 
-}
+return 1; }
 
-function insertFiltersByCategory() {
-
-	global $db;
+function insertFiltersByCategory() { global $db;
 	
 	$categories = $db->categories;
 	
@@ -611,145 +480,89 @@ function insertFiltersByCategory() {
 	
 	$res = $filters->find();
 	
-	foreach ($res as $rows) { 
+	foreach ($res as $rows) { if (array_key_exists('values', $rows)) {
 		
-		if (array_key_exists('values', $rows)) {
-		
-			foreach ($rows['values'] as $r) {
-			
-				$categories->update(['orw' => $r['category']], ['$addToSet' => ['filters' => $rows['name']]]);
+		foreach ($rows['values'] as $r) $categories->update(['orw' => $r['category']], ['$addToSet' => ['filters' => $rows['name']]]); } }
 
-			}
-			
-		}
+return 1; }
 
-	}
-
-}
-
-function cleanup($array, $type) {
-
-	global $dir;
+function cleanup($array, $type) { global $dir;
 	
-	if (!empty($array)) {
-	
-		$linecodes = array_keys($array);
+	if (!empty($array)) { $linecodes = array_keys($array);
 		
-		foreach ($linecodes as $line) {
-		
-			$img_dir = $dir . $line . '/orwdb/' . $type . '/';
+		foreach ($linecodes as $line) {	$img_dir = $dir . $line . '/orwdb/' . $type . '/';
 			
 			if (!file_exists($dir . $line . '/orwdb/extra')) mkdir($dir . $line . '/orwdb/extra/');
 			
 			if (!file_exists($dir . $line . '/orwdb/extra/' . $type)) mkdir($dir . $line . '/orwdb/extra/' . $type);
 			
-			foreach (glob($img_dir . "*") as $file) {
-			
-				$f = basename($file);
+			foreach (glob($img_dir . "*") as $file) { $f = basename($file);
 				
-				if (!in_array($f, $array[$line])) {
-				
-					copy($file, $dir . $line . '/orwdb/extra/' . $type . '/' . $f) or die("Error copying $type file $f");
-					
-					unlink($file);
-				
-				}
-			
-			}
-		
-		}
+				if (!in_array($f, $array[$line])) {	copy($file, $dir . $line . '/orwdb/extra/' . $type . '/' . $f); unlink($file); } } } }
 	
-	}
-	
-}
+return 1; }
 
 }
 
-{# Output
+{# --Output
 
-function printErrors($array) { global $validFilters, $brand_linecode;
+function printErrors($array) { global $validFilters, $dir, $current_linecode, $brand_linecode;
 
 	$bullets = ['Bullet Point 1', 'Bullet Point 2', 'Bullet Point 3', 'Bullet Point 4', 'Bullet Point 5'];
 	
 	$images = ['Image 1', 'Image 2', 'Image 3', 'Image 4', 'Image 5', 'Image 6', 'Image 7', 'Image 8'];
 
+	echo '<div id="tabs"><span id="tabs-list"></span>';
+	
+	$tabs = null;
+
   foreach ($array as $type => $error) {
 	
-		if ($type == 'Manufacturer') {
+		if ($type == 'Manufacturer') { $tabs .= "<li><a href='#manufacturer'>MANUFACTURER</a></li>"; $i = 0; foreach ($error as $name => $rows) {
+			
+			$line = $brand_linecode[$name];
+		
+			$range = implode(', ', $rows);
+			
+			$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+		
+			$response = "<div class='highlightblock' style=\"line-height: 1.5em;\"><span id=\"add$i\"><a class='addbutton' href=\"#\" onclick=\"addOne('brand',$i,'$name','$line'); return false;\">Add</a></span>";
+	
+			$response .= " Manufacturer [$name] does not exist in the database. Row(s) $show</div>";
+		
+			echo "<div id='manufacturer'>" . $response . "</div>"; $i++; } }
+		
+		if ($type == 'UPC') { $tabs .= "<li><a href='#upc'>UPC</a></li>"; foreach ($error as $name => $rows) {
+			
+			$response = "UPC [$name] is ";
+			
+			$response .= (count($rows) > 1) ? "repeated in rows " . implode(', ', $rows) : 'invalid in row ' . $rows[0];
 
-			echo "<h3>MANUFACTURER</h3>";
+			$response .= "<br />";				
+			
+			echo "<div id='upc'>" . $response . "</div>"; } }
 		
-			$i = 0;
-		
-			foreach ($error as $name => $rows) {
+		if ($type == 'ISIS SKU') { $tabs .= "<li><a href='#isis-sku'>ISIS SKU</a></li>"; $response = null; foreach ($error as $name => $rows) {
 			
-				$line = $brand_linecode[$name];
+			$response .= "<table><tr><td width='140'><font face='monospace'>[$name]</font></td>";
 			
-				$range = implode(', ', $rows);
-				
-				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+			$response .= (count($rows) > 1) ? "<td>is repeated in rows</td>" . implode(', ', $rows) : "<td>does not exist in ISIS. Row " . $rows[0];  
 			
-				$response = "<div style=\"line-height: 1.5em;\"><span id=\"add$i\"><a href=\"#\" onclick=\"addOne('brand',$i,'$name','$line'); return false;\">Add</a></span>";
-		
-				$response .= " - Manufacturer [$name] does not exist in the database. Row(s) $show</div>";
+			$response .= '</td></tr></table>'; }
 			
-				$i++;
-			
-				echo $response;
-			
-			}
-		
-		}
-		
-		if ($type == 'UPC') {
-
-			echo "<h3>UPC</h3>";
-		
-			foreach ($error as $name => &$rows) {
-			
-				// unset($rows['first']);
-			
-				$response = "UPC [$name] is ";
-				
-				$response .= (count($rows) > 1) ? "repeated in rows " . implode(', ', $rows) : 'invalid in row ' . $rows[0];
-
-				$response .= "<br />";				
-				
-				echo $response;
-			
-			}
-		}
-		
-		if ($type == 'ISIS SKU') {
-		
-			echo "<h3>ISIS SKU</h3>";
-		
-			foreach ($error as $name => $rows) {
-			
-				$response = "ISIS SKU <font face='monospace'>[$name]</font> ";
-				
-				$response .= (count($rows) > 1) ? "is repeated in rows " . implode(', ', $rows) : "does not exist in ISIS. Row " . $rows[0];  
-				
-				$response .= '<br />';
-			
-				echo $response;
-			
-			}
-		}
+			echo "<div id='isis-sku'>" . $response . "</div>"; }
 		
 		if (in_array($type, $bullets)) {
 		
-			echo "<h3>BULLET POINTS</h3>";
+			$tabs .= "<li><a href='#bullets'>BULLET POINTS</a></li>";
 		
 			$response = "$type is too long in row(s) " . implode(', ', $error) . "<br />";
 			
-			echo $response;
-		
-		}
+			echo "<div id='bullets'>" . $response . "</div>"; }
 		
 		if ($type == 'Description') {
 		
-			echo "<h3>DESCRIPTION</h3>";
+			$tabs .= "<li><a href='#description'>DESCRIPTION</a></li>";
 			
 			$range = implode(', ', $error);
 			
@@ -757,15 +570,13 @@ function printErrors($array) { global $validFilters, $brand_linecode;
 		
 			$response = "$type is too long in row(s) $show<br />";
 			
-			echo $response;
-		
-		}
+			echo "<div id='description'>" . $response . "</div>"; }
 
 		if (in_array($type, $images)) {
 		
-			echo "<h3>IMAGES</h3>";
+			$tabs .= "<li><a href='#images'>IMAGES</a></li>";
 			
-			$response = '';
+			$response = 'Directory: ' . $dir . $current_linecode . '/orwdb/images/<br />'; //@todo change to account for multiple linecodes per sheet
 			
 			foreach ($error as $image => $rows) {
 			
@@ -773,98 +584,65 @@ function printErrors($array) { global $validFilters, $brand_linecode;
 				
 				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
 				
-				$response .= "$image&nbsp;&nbsp;&nbsp;&nbsp; Row(s) $show<br />";
+				$response .= "<table><tr><td width='200' height='25'>$image</td><td>Row(s) $show</td></tr></table>"; }
 			
-			}
-			
-			echo $response;
-		
-		}
+			echo "<div id='images'>" . $response . "</div>"; }
 
-		if ($type == "Instructions") {
+		if ($type == "Instructions") { $tabs .= "<li><a href='#instructions'>INSTRUCTIONS</a></li>"; $response = ''; foreach ($error as $instructions => $rows) {
+			
+			$range = implode(', ', $rows);
+			
+			$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
+			
+			$response .= "$instructions&nbsp;&nbsp;&nbsp;&nbsp; Row(s) $show<br />"; }
+			
+			echo "<div id='instructions'>" . $response . "</div>"; } //@todo make it work more like images, with an address to the folder
 		
-			echo "<h3>INSTRUCTIONS</h3>";
+		if ($type == 'Filters') { $tabs .= "<li><a href='#filters-u'>FILTERS</a></li>";	$i = 1;	$response = '';	foreach ($error as $filter => $value) {
 			
-			$response = '';
-			
-			foreach ($error as $instructions => $rows) {
-			
+			foreach ($value as $val => $info) {	foreach ($info as $cat => $rows) {
+				
+				$vals = "empty"; $t_vals = $vals;
+				
 				$range = implode(', ', $rows);
+	
+				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\" title='$range'>more</a></sup>" : $range;
 				
-				$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\">more</a></sup>" : $range;
-				
-				$response .= "$instructions&nbsp;&nbsp;&nbsp;&nbsp; Row(s) $show<br />";
-			
-			}
-			
-			echo $response;
-		
-		}
-		
-		if ($type == 'Filters') {
-			
-			echo "<h3>FILTERS</h3>";
-			
-			$i = 1;
-		
-			foreach ($error as $filter => $value) {
+				if (isset($validFilters[$filter][$cat])) {
 
-				$response = '';
-				
-				foreach ($value as $val => $info) {
-				
-					foreach ($info as $cat => $rows) {
+					asort($validFilters[$filter][$cat]);
 					
-						$vals = "empty"; $t_vals = $vals;
-						
-						$range = implode(', ', $rows);
-			
-						$show = (strlen($range) > 20) ? substr($range, 0, 20) . "... <sup><a href=\"javascript:alert('$range')\" title='$range'>more</a></sup>" : $range;
-						
-						if (isset($validFilters[$filter][$cat])) {
-
-							asort($validFilters[$filter][$cat]);
-							
-							$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
-							
-							$vals = str_replace("'", "\'", $vals);
-							
-							$t_vals = implode("\n", $validFilters[$filter][$cat]);						
-						
-						}
-						
-						$js_val = str_replace("'", "\'", $val);
-						
-						$response .= "<div><span id=\"add$i\">&nbsp;<a href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$js_val'); return false;\">Add</a></span>";
-	
-						$response .= " - <font face='monospace'>[$filter";
-						
-						$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title =\"$t_vals\">&lowast;</a></sup>";
-						
-						$response .= "]</font> value <font face='monospace'>[$val]</font> is missing<br />";
-						
-						$response .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<br /><br /></div>";
-						
-						$i++;
-				
-					}
+					$vals = "[$filter] in $cat\\n\\n" . implode("\\n", $validFilters[$filter][$cat]);
 					
-				}
+					$vals = str_replace("'", "\'", $vals);
+					
+					$t_vals = implode("\n", $validFilters[$filter][$cat]); }
 				
-				echo $response;
-			
-			}
-		
-		}
-	
-	}
-	
-	echo '<br /><h3><input type="button" value="Reload" onclick="reload()">&nbsp;&nbsp;&nbsp;';
-	echo (count($array) == 1) ? '<a href="?skip_isis">Continue</a></h3>' : '<a href="">Continue</a></h3>';
-	
-	exit();
+				$js_val = str_replace("'", "\'", $val);
+				
+				$response .= "<div class='highlightblock'><div  style='display:inline-block; vertical-align: top;' id=\"add$i\">&nbsp;<a class='addbutton' href=\"#\" onclick=\"addFilterValues($i,'$filter','$cat','$js_val'); return false;\">Add</a></div>";
 
-}
+				$response .= " <div style='display:inline-block; margin-left: 10px'><font face='monospace'>[$filter";
+				
+				$response .= "<sup><a href=\"javascript:alert('$vals')\" style=\"text-decoration: none;\" title =\"$t_vals\">&lowast;</a></sup>";
+				
+				$response .= "]</font> value <font face='monospace'>[$val]</font> is missing<br>";
+				
+				$response .= "<div><font face='monospace' style=\"background-color: #e5e0ec;\">$cat</font> in row(s) $show<hr></div></div></div>";
+				
+				$i++; } }	}
+		
+			echo "<div id='filters-u'>" . $response . "</div>";	} }
+	
+	echo "<script type='text/javascript'>makeTabs(\"$tabs\"); $(\"#tabs\").tabs()</script>";
+	
+	$step = "<script language='javascript'>highlightStep('";
+	
+	if (count($array) == 1 && key($array) == "ISIS SKU") echo $step . "step5')</script><a class='continueclick' href='?skip_isis'>Insert Into Database</a>";
+	
+	else echo $step . "step5')</script><a class='continueclick' href=''>Continue</a>";
+
+exit(); }
 
 }
 
@@ -872,12 +650,10 @@ function printErrors($array) { global $validFilters, $brand_linecode;
 
 {# VARiABLES
 
-{# Const
+{# --Const
 
 $form = <<<EOT
-				<br />
-				<center><h2>Choose file to upload</h2>
-				<br />
+				<center>
 				<form enctype="multipart/form-data" action="{$_SERVER['PHP_SELF']}" method="POST">
 				<input type="hidden" name="MAX_FILE_SIZE" value="200000000" />
 				<input name="userfile" type="file" />
@@ -888,9 +664,11 @@ EOT;
 
 $dir = "//orw-file-server/shared/Marketing/Photo Product/";
 
+$margin = "<div id='body-margin'>";
+
 }
 
-{# Init
+{# --Init
 
 $ISIS = array();
 
@@ -918,7 +696,7 @@ $rows = null;
 
 }
 
-{# Var
+{# --Var
 
 $db = dbConnect(DBHOST, DBNAME);
 
@@ -936,27 +714,21 @@ $validFilters = getFilters();
 
 {# MAiN
 
-if (empty($_FILES) && !file_exists("files/file.csv")) echo $form;
+echo $margin;
 
-else {
+if (empty($_FILES) && !file_exists("files/file.csv")) { echo $form;	echo "<script language='javascript'>highlightStep('step1')</script>"; }
 
-	getFile(); addCategories($file); validateHeaders(fgetcsv($file)); processRows($file); 
+else { getFile(); addCategories($file); validateHeaders(fgetcsv($file)); processRows($file); if (empty($errors) || isset($_GET['skip_isis'])) { 
 	
-	if (empty($errors) || isset($_GET['skip_isis'])) { 
+	insert($rows); insertFiltersByCategory();
 	
-		insert($rows);
-		
-		insertFiltersByCategory();
-		
-		cleanup($IMGs, "images"); cleanup($PDFs, "instructions");
-		
-		echo 'Success! <a href="index.php">Go Home</a>';
-		
-	}
+	cleanup($IMGs, "images"); cleanup($PDFs, "instructions");
 	
-	else printErrors($errors);
-
-}
+	echo 'Database insertion successful.';
+	
+	echo "<p>Perform <a href='admin/IsisSync.php'>ISIS Syncronization</a>. It may take a while so please be patient.</p>"; }
+	
+	else printErrors($errors); }
 
 }
 
@@ -968,5 +740,6 @@ if (file_exists("files/file.csv")) unlink("files/file.csv");
 
 ?>
 
+</div>
 </body>
 </html>

@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="jquery/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="css.css">
+<script src="js/jquery-1.9.1.js"></script>
+<script src="styling/jquery/jquery-ui.js"></script>
+<script src="sticky/jquery.sticky.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#menu").sticky({topSpacing:0});
+  });
+  
+  $(function() {
+    $( "#dialog" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 1000
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+ 
+    $( "#opener" ).click(function() {
+      $( "#dialog" ).dialog( "open" );
+    });
+  });
+</script>

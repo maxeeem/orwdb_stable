@@ -14,13 +14,9 @@ function dbConnect($dbhost, $dbname) {
 	
 	$db = $m->$dbname;
 	
-	return $db;
+return $db; }
 
-}
-
-function addValues($f, $c, $v) {
-
-	global $db;
+function addValues($f, $c, $v) { global $db;
 	
 	$categories = $db->categories;
 	
@@ -42,7 +38,7 @@ function addValues($f, $c, $v) {
 
 	echo "Done";
 	
-}
+return 1; }
 
 }
 
@@ -55,6 +51,7 @@ $db = dbConnect(DBHOST, DBNAME);
 {# MAiN
 
 addValues($_GET['filter'], $_GET['category'], $_GET['value']);
+// addValues("Finish","Suspension.Shocks", "Green");
 
 }
 
