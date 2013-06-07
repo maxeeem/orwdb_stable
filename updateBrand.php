@@ -75,9 +75,9 @@ EOT;
 
 $brand = null;
 
-$db = dbConnect(DBHOST, DBNAME);
-
 $margin = "<div id='body-margin'>";
+
+$db = dbConnect(DBHOST, DBNAME);
 
 }
 
