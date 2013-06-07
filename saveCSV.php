@@ -1,3 +1,9 @@
+<!-- @Author : Max Poole
+
+@Purpose : See MAiN section, near the bottom of the script 
+
+@Credits : Jeffrey Tu (CSS & jQuery) -->
+
 <?php # REF -- reviewBrand.php -- js function csv()
 
 {# iNCLUDES
