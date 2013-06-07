@@ -77,11 +77,13 @@ $brand = null;
 
 $db = dbConnect(DBHOST, DBNAME);
 
+$margin = "<div id='body-margin'>";
+
 }
 
 {# MAiN
 
-echo "<div id='body-margin'>";
+echo $margin;
 
 if (empty($_FILES)) echo $form;
 
