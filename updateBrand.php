@@ -1,5 +1,6 @@
-<html>
-<title>Update Manufacturer</title>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<title>ORWDB - Update Manufacturer</title>
 <head>
 
 <?php $p = ""; require($p . "styling/header-script.php"); ?>
@@ -55,11 +56,15 @@ return $SKUs; }
 {# VARiABLES
 
 $form = <<<EOT
+				<div class='body-margin2'>Update a manufacturer.<center>
 				<form enctype="multipart/form-data" action="{$_SERVER['PHP_SELF']}" method="POST">
 				<input type="hidden" name="MAX_FILE_SIZE" value="200000000" />
-				<input name="userfile" type="file" />
-				<input type="submit" value="Submit" />
+				<div class='uploadwrap'><input id='submitbutton' name="userfile" onchange="getfilename()" type="file"/></div>
+				<button type='button' class='generalbutton' onclick="document.getElementById('submitbutton').click()" ><div id='filefield'>Choose File</div></button>
+				<input id='process' class='generalbutton' onclick='processtext()' type="submit" value="Submit" />
 				</form>
+				</center>
+				
 EOT;
 
 $brand = null;
@@ -84,9 +89,9 @@ else {
 	
 	foreach ($old as $oldSKU) { if (!in_array($oldSKU, $new)) $remove[] = $oldSKU; }
 	
-	if (!empty($add)) { echo "<h3>To Add</h3>"; foreach ($add as $a) echo $a . "</br>"; }
+	if (!empty($add)) { echo "To Add"; foreach ($add as $a) echo $a . "</br>"; }
 	
-	if (!empty($remove)) { echo "<h3>To Remove</h3>"; foreach ($remove as $r) echo $r . "</br>"; } }
+	if (!empty($remove)) { echo "To Remove"; foreach ($remove as $r) echo $r . "</br>"; } } 
 
 }
 

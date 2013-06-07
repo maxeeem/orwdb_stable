@@ -1485,12 +1485,12 @@ showProps.height = showProps.paddingTop = showProps.paddingBottom =
 $.widget( "ui.accordion", {
 	version: "1.10.1",
 	options: {
-		active: false,
+		active: true,
 		animate: {},
-		collapsible: true,
+		collapsible: false,
 		event: "click",
 		header: "> li > :first-child,> :not(li):even",
-		heightStyle: "auto",
+		heightStyle: "content",
 		icons: {
 			activeHeader: "ui-icon-triangle-1-s",
 			header: "ui-icon-triangle-1-e"
@@ -1578,7 +1578,7 @@ $.widget( "ui.accordion", {
 			.removeAttr( "aria-expanded" )
 			.removeAttr( "aria-hidden" )
 			.removeAttr( "aria-labelledby" )
-			.removeClass( "ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content ui-accordion-content-active ui-state-disabled" )
+			.removeClass( "ui-helper-reset ui-widget-content-veh-acc ui-corner-bottom ui-accordion-content ui-accordion-content-active ui-state-disabled" )
 			.each(function() {
 				if ( /^ui-accordion/.test( this.id ) ) {
 					this.removeAttribute( "id" );
@@ -1708,7 +1708,7 @@ $.widget( "ui.accordion", {
 			.addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all" );
 
 		this.headers.next()
-			.addClass( "ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom" )
+			.addClass( "ui-accordion-content ui-helper-reset ui-widget-content-veh-acc ui-corner-bottom" )
 			.filter(":not(.ui-accordion-content-active)")
 			.hide();
 	},
@@ -1896,7 +1896,7 @@ $.widget( "ui.accordion", {
 		if ( !clickedIsActive ) {
 			clicked
 				.removeClass( "ui-corner-all" )
-				.addClass( "ui-accordion-header-active ui-state-active ui-corner-top" );
+				.addClass( "ui-accordion-header-active ui-state-active-veh-acc ui-corner-top" );
 			if ( options.icons ) {
 				clicked.children( ".ui-accordion-header-icon" )
 					.removeClass( options.icons.header )
@@ -2523,7 +2523,7 @@ $.widget( "ui.autocomplete", {
 		var ul = this.menu.element;
 		ul.outerWidth( Math.max(
 			// Firefox wraps long text (possibly a rounding bug)
-			// so we add 1px to avoid the wrapping (#7513)
+			// so we add  to avoid the wrapping (#7513)
 			ul.width( "" ).outerWidth() + 1,
 			this.element.outerWidth()
 		) );

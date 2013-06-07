@@ -1,5 +1,6 @@
-<html>
-<title>Upload File</title>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<title>ORWDB - Upload File</title>
 <head>
 
 <?php $p = ""; require("styling/header-script.php"); ?>
@@ -296,7 +297,7 @@ function validateValues($name, $value, $c) {
 		
 		else { $brand_linecode[$value] = $current_linecode;	$errors[$name][$value][] = $c; } }
 	
-	if ((strpos($name, 'UPC') !== false) && !empty($value)) { 
+	if ((strpos($name, 'UPC') !== false)) { if (empty($value)) $data = ''; else { 
 		
 		if (is_numeric($value) && (strlen($value) == 12)) {
 		
@@ -304,7 +305,7 @@ function validateValues($name, $value, $c) {
 			
 			else { $UPCs[$value][] = $c; $errors[$name][$value] = $UPCs[$value]; } }
 		
-		else $errors[$name][$value][] = $c;	}
+		else $errors[$name][$value][] = $c;	} }
 	
 	if (strpos($name, 'ISIS SKU') !== false) { $data = $value;
 		
@@ -400,7 +401,7 @@ function addFilters($array) {	global $validFilters;
 	
 		echo $response;	$i++; }
 	
-	echo '<a class="continueclick" href="upload.php">Continue</a>';
+	echo '<a id="continueclick" class="continueclick" href="upload.php" onclick="processtext()">Continue</a>';
 	
 exit(); }
 
@@ -428,9 +429,7 @@ function addCategories($file) { global $validCategories;
 	
 	$i = 0;
 	
-	foreach (array_unique($categories) as $cat) { if (!in_array($cat, $validCategories)) {
-		
-		$add = true;
+	foreach (array_unique($categories) as $cat) { if (!in_array($cat, $validCategories)) { $add = true;
 		
 		$response = "<div class='highlightblock'><span id=\"add$i\"><a class='addbutton' href=\"#\" onclick=\"addOne('category',$i,'$cat'); return false;\">Add</a></span>";
 		
@@ -444,7 +443,7 @@ function addCategories($file) { global $validCategories;
 		
 		echo "<script language='javascript'>highlightStep('step2')</script>";
 		
-		echo '<a class="continueclick" href="upload.php">Continue</a>';
+		echo '<a id="continueclick" class="continueclick" href="upload.php" onclick="processtext()">Continue</a>';
 		
 		exit(); }
 
@@ -544,11 +543,11 @@ function printErrors($array) { global $validFilters, $dir, $current_linecode, $b
 		
 		if ($type == 'ISIS SKU') { $tabs .= "<li><a href='#isis-sku'>ISIS SKU</a></li>"; $response = null; foreach ($error as $name => $rows) {
 			
-			$response .= "<table><tr><td width='140'><font face='monospace'>[$name]</font></td>";
+			$response .= "<div class='upload-isis-sku-line'><div class='upload-isis-sku-name'>[$name]</div>";
 			
-			$response .= (count($rows) > 1) ? "<td>is repeated in rows</td>" . implode(', ', $rows) : "<td>does not exist in ISIS. Row " . $rows[0];  
+			$response .= (count($rows) > 1) ? "<div class='upload-isis-sku-dne'>is repeated in rows</div>" . implode(', ', $rows) : "<div class='upload-isis-sku-dne'>does not exist in ISIS. Row " . $rows[0];  
 			
-			$response .= '</td></tr></table>'; }
+			$response .= '</div></div><br>'; }
 			
 			echo "<div id='isis-sku'>" . $response . "</div>"; }
 		
@@ -638,9 +637,9 @@ function printErrors($array) { global $validFilters, $dir, $current_linecode, $b
 	
 	$step = "<script language='javascript'>highlightStep('";
 	
-	if (count($array) == 1 && key($array) == "ISIS SKU") echo $step . "step5')</script><a class='continueclick' href='?skip_isis'>Insert Into Database</a>";
+	if (count($array) == 1 && key($array) == "ISIS SKU") echo $step . "step5')</script><a class='continueclick' id='continueclick' onclick='processtext()' href='?skip_isis'>Insert Into Database</a>";
 	
-	else echo $step . "step5')</script><a class='continueclick' href=''>Continue</a>";
+	else echo $step . "step4')</script><a id='continueclick' class='continueclick' href='upload.php' onclick='processtext()'>Continue</a>";
 
 exit(); }
 
@@ -653,13 +652,15 @@ exit(); }
 {# --Const
 
 $form = <<<EOT
+				<div class='body-margin2'><br><br>
 				<center>
 				<form enctype="multipart/form-data" action="{$_SERVER['PHP_SELF']}" method="POST">
-				<input type="hidden" name="MAX_FILE_SIZE" value="200000000" />
-				<input name="userfile" type="file" />
-				<input type="submit" value="Submit" />
+				<button type='button' class='generalbutton' onclick="document.getElementById('submitbutton').click()" ><div id='filefield'>Choose File</div></button>
+				<div class='uploadwrap'><input id='submitbutton' name="userfile" onchange="getfilename()" type="file"/></div>
+				<input id='process' class='generalbutton' onclick='processtext()' type="submit" value="Submit" />
 				</form>
 				</center>
+				</div>
 EOT;
 
 $dir = "//orw-file-server/shared/Marketing/Photo Product/";
@@ -718,15 +719,17 @@ echo $margin;
 
 if (empty($_FILES) && !file_exists("files/file.csv")) { echo $form;	echo "<script language='javascript'>highlightStep('step1')</script>"; }
 
-else { getFile(); addCategories($file); validateHeaders(fgetcsv($file)); processRows($file); if (empty($errors) || isset($_GET['skip_isis'])) { 
+else { getFile(); addCategories($file); validateHeaders(fgetcsv($file)); processRows($file); 
+
+	if (empty($errors) || isset($_GET['skip_isis'])) { 
 	
-	insert($rows); insertFiltersByCategory();
-	
-	cleanup($IMGs, "images"); cleanup($PDFs, "instructions");
-	
-	echo 'Database insertion successful.';
-	
-	echo "<p>Perform <a href='admin/IsisSync.php'>ISIS Syncronization</a>. It may take a while so please be patient.</p>"; }
+		insert($rows); insertFiltersByCategory();
+		
+		cleanup($IMGs, "images"); cleanup($PDFs, "instructions");
+		
+		echo 'Database insertion successful.';
+		
+		echo "<p>Perform <a href='admin/IsisSync.php'>ISIS Syncronization</a>. It may take a while so please be patient.</p>"; }
 	
 	else printErrors($errors); }
 

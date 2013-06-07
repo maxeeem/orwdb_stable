@@ -75,9 +75,13 @@ function updateProducts($brand) { global $db, $ISIS, $brands;
 	
 		$temp = array($pn,'','','','','');
 	
-		if (array_key_exists($pn, $ISIS[$linecode])) {
-		
-			$missing['partial'][$pn] = $temp; 
+		if (array_key_exists($pn, $ISIS[$linecode])) { $missing['partial'][$pn] = $temp; $avail = 0;
+			
+			foreach ($ISIS[$linecode][$pn] as $co) $avail += $co['Avail']; 
+			
+			$qty = ($avail < 0) ? 0 : $avail;
+			
+			$products->update(["Manufacturer SKU" => $pn], ['$set' => ["Quantity Available" => $qty]]);
 	
 			if ($ISIS[$linecode][$pn][5]['Lbs'] == '0.00') $missing['partial'][$pn][2] = 'X';
 			
@@ -105,7 +109,7 @@ function updateProducts($brand) { global $db, $ISIS, $brands;
 	
 	}
 	
-	$manufacturers->update(['brand' => $brand], ['$set' => ['Missing' => $missing]]);
+	if (!empty($missing)) $manufacturers->update(['brand' => $brand], ['$set' => ['Missing' => $missing]]);
 
 }
 	

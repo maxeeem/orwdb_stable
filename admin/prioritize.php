@@ -1,5 +1,6 @@
-<html>
-<title>Prioritize Filters</title>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<title>ORWDB - Prioritize Filters</title>
 <head>
 
 <?php $p = "../"; require($p . "styling/header-script.php"); ?>
@@ -14,15 +15,15 @@ function showFilters(category) {
 		
 		var values = ''
 
-		for (var i in window.array[category]) values += "<li style='list-style-type: none;' id='filter_" + i + "'>" + window.array[category][i] + "</li>"
+		for (var i in window.array[category]) values += "<li class='assignfilters-lines';' id='filter_" + i + "'>" + window.array[category][i] + "</li>"
 
 		$("#filters").html(values)
 
 		$("#filters").sortable() 
 		
-		$("#filters").append('<br /><input type="button" id="cancel" value="Cancel" onclick="cancel()">')
+		$("#prioritizefilters-button").html('<div class="marginbutton-left"><input type="button" class="generalbutton" id="cancel" value="Reset" onclick="cancel()"></div>')
 
-		$("#filters").append('<input type="button" id="save" value="Save & Reload" onclick="save(\'' + category + '\')">') }
+		$("#prioritizefilters-button").append('<div class="marginbutton-right"><input type="button" class="generalbutton" id="save" value="Save" onclick="save(\'' + category + '\')"></div>') }
 
 return 1 }
 
@@ -124,7 +125,7 @@ return $nav; }
 
 $db = dbConnect(DBHOST, DBNAME);
 
-$sortable = '<div id="selectedCat"></div><div id="filtersbox"><ul id="filters">Please select a filter category.</ul></div>';
+$sortable = '<div id="filtersbox"><div class="assignfilters-sort"><div id="selectedCat"></div><ul id="filters">Please select a filter category.</ul><div id="prioritizefilters-button"></div></div></div>';
 
 $path = null;
 

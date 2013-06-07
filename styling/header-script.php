@@ -20,12 +20,45 @@ $(document).ready(function() { //Sticky
 
 $(document).ready(function() { //Help menu
 	
-	$('#helpicon').click(function(event) { $('#helptext').slideToggle(); event.stopPropagation() })
+	var slideopen = false;
 	
-	$('#helptextclick2').click(function() { $('#helptext').slideToggle() })
-	
-	$('html').click(function(event) {	if (!$(event.target).is('#helptext') && !$(event.target).parents("#helptext").is("#helptext")) { $('#helptext').slideUp() } }) })
+	$('#helpicon').click(function(event) {
+		
+		$('#helptext').slideToggle(); event.stopPropagation();
 
-$("#accordion").accordion()
+		if (slideopen == false) { 
+						
+			slideopen = true;
+			
+			$('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm-up.png")
+		}
+		
+		else {
+			
+			slideopen = false;
+			$('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm.png");
+		}
+	})
+	
+	$('#helptextclick2').click(function() { $('#helptext').slideUp(); slideopen = false; $('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm.png") })
+	
+	$('html').click(function(event) {	if (!$(event.target).is('#helptext') && !$(event.target).parents("#helptext").is("#helptext")) { $('#helptext').slideUp(); slideopen = false; $('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm.png") } }) })
+
+$(document).ready(function() { //Assign Compatibility	
+	
+  $("#accordion, #accordion2").accordion({ collapsible: true })
+  
+  $("#tabs-veh, #tabs-update").tabs({ collapsible: true }) })
+  
+function processtext() { //Processing Button
+	
+	$("#continueclick").html("Processing...")
+	$("#process").val("Processing...") }
+	
+function getfilename() { //Get File Name
+	var gotfilename = $("#submitbutton").val().replace("C:\\fakepath\\", "");
+	$("#filefield").html(gotfilename);
+	if (gotfilename == '') gotfilename = "Choose File";
+}
 
 </script>

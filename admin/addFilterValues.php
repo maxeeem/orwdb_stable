@@ -1,4 +1,4 @@
-<?php
+<?php # REF -- upload.php -- js function addFilterValues()
 
 {# iNCLUDES
 

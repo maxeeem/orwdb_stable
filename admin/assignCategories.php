@@ -1,5 +1,6 @@
-<html>
-<title>Assign Categories</title>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<title>ORWDB - Assign Categories</title>
 <head>
 
 <?php $p = "../"; require($p . "styling/header-script.php"); ?>
@@ -10,7 +11,7 @@ function editCategory(category) {
 
 	var edit = document.getElementById("edit")
 
-	var msg = "<form action=\"<?php echo $_SERVER['PHP_SELF']; ?>\" method='post'>ORW: " + category.bold() + "<br /><br />"
+	var msg = "<form action=\"<?php echo $_SERVER['PHP_SELF']; ?>\" method='post'>" + category.bold() + "<br /><br />"
 
 	msg += "<input name='orw' type='hidden' value='" + category + "'>"
 
@@ -21,24 +22,36 @@ function editCategory(category) {
 		if (window.categories[category]["amazon"] == '' || window.categories[category]["ebay"] == '' || window.categories[category]["ebaystore"] == '') {
 		
 			placeholder = "placeholder='Not Specified'" }
+		
+		var autopart = "<input type='radio' name='product_type' value='AutoPart'"
+		
+		var accessory = "<input type='radio' name='product_type' value='AutoAccessoryMisc'"
+		
+		if (window.categories[category]["product_type"] == '' || window.categories[category]["product_type"] == 'AutoPart') { 
+		
+			autopart += " checked>Auto Parts"; accessory += ">Accessories" }
+		
+		if (window.categories[category]["product_type"] == 'AutoAccessoryMisc') {	autopart += ">Auto Parts"; accessory += " checked>Accessories"; }
+		
+		amazon_cat = "<input type='text' size='25' name='amazon' value='" + window.categories[category]["amazon"] + "'" + placeholder + ">"
+		
+		ebay_cat = "<input type='text' size='25' name='ebay' value='" + window.categories[category]["ebay"] + "'" + placeholder + ">"
+		
+		ebaystore_cat = "<input type='text' size='25' name='ebaystore' value='" + window.categories[category]["ebaystore"] + "'" + placeholder + ">"
+		
+		msg += "<div class='assigncategories-name'>Amazon Part Type:</div>" + autopart + "&emsp;" + accessory + "<br />"
+		
+		msg += "<div class='assigncategories-name'>Amazon:</div>" + amazon_cat + "<br />"
+		
+		msg += "<div class='assigncategories-name'>eBay:</div>" + ebay_cat + "<br />"
 
-		amazon_cat = "<input type='text' size='40' name='amazon' value='" + window.categories[category]["amazon"] + "'" + placeholder + ">"
-		
-		ebay_cat = "<input type='text' size='40' name='ebay' value='" + window.categories[category]["ebay"] + "'" + placeholder + ">"
-		
-		ebaystore_cat = "<input type='text' size='40' name='ebaystore' value='" + window.categories[category]["ebaystore"] + "'" + placeholder + ">"
-		
-		msg += "Amazon:&nbsp;&nbsp;&nbsp;&nbsp;" + amazon_cat + "<br />"
-		
-		msg += "eBay:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + ebay_cat + "<br />"
+		msg += "<div class='assigncategories-name'>eBay Store:</div>" + ebaystore_cat + "<br /><br />"
 
-		msg += "eBayStore:&nbsp;" + ebaystore_cat + "<br /><br />"
-
-		msg += "<input type='reset'><input type='submit' value='Save'></form>"
+		msg += "<div class='marginbutton-left'><input class='generalbutton' type='reset'></div><div class='marginbutton-right'><input class='generalbutton' type='submit' value='Save'></div></form>"
 
 	}
 
-	else msg = category.bold() + " does not have products associated with it.</form>"
+	else msg = category.bold() + "<br>Does not contain products.</form>"
 	
 	edit.innerHTML = msg
 
@@ -57,6 +70,8 @@ return 1 }
 require $p . "styling/header.html";
 
 require "../db/.db-info.php";
+
+echo $helptext;  // from header.html
 
 }
 
@@ -82,7 +97,11 @@ function getCategories() { global $db;
 		
 		$list[$r['orw']]['ebay'] = (array_key_exists('ebay', $r)) ? $r['ebay'] : "";
 		
-		$list[$r['orw']]['ebaystore'] = (array_key_exists('ebaystore', $r)) ? $r['ebaystore'] : ""; }
+		$list[$r['orw']]['ebaystore'] = (array_key_exists('ebaystore', $r)) ? $r['ebaystore'] : ""; 
+		
+		$list[$r['orw']]['product_type'] = (array_key_exists('product_type', $r)) ? $r['product_type'] : ""; 
+		
+		}
 	
 	ksort($list);
 
@@ -112,13 +131,13 @@ function makeNav($categories) {
 
 return $nav; }
 
-function updateCategories($orw, $amazon, $ebay, $ebaystore) { global $db;
+function updateCategories($orw, $amazon, $ebay, $ebaystore, $product_type) { global $db;
 
 	$categories = $db->categories;
 	
-	$categories->update(["orw" => $orw], ['$set' => ["amazon" => $amazon, "ebay" => $ebay, "ebaystore" => $ebaystore]]);
+	$categories->update(["orw" => $orw], ['$set' => ["amazon" => $amazon, "ebay" => $ebay, "ebaystore" => $ebaystore, "product_type" => $product_type]]);
 	
-	echo '<script type="text/javascript">$("#edit").html("Saved <strong>' . $orw . '</strong>");</script>';
+	echo '<script type="text/javascript">$("#edit").html("<strong>' . $orw . '</strong> - Saved");</script>';
 
 return 1; }
 
@@ -130,7 +149,7 @@ $db = dbConnect(DBHOST, DBNAME);
 
 $path = null;
 
-$edit = "<div id='edit'>Please select a category.</div>";
+$edit = "<div id='edit' class='assigncategories-edit'>Please select a category.</div>";
 
 $margin = "<div id='body-margin'>";
 
@@ -140,9 +159,9 @@ $margin = "<div id='body-margin'>";
 
 echo $margin; echo $edit;
 
-if (isset($_POST['orw']) && isset($_POST['amazon']) && isset($_POST['ebay']) && isset($_POST['ebaystore'])) {
+if (isset($_POST['orw']) && isset($_POST['amazon']) && isset($_POST['ebay']) && isset($_POST['ebaystore']) && isset($_POST['product_type'])) {
 	
-	updateCategories($_POST['orw'], $_POST['amazon'], $_POST['ebay'], $_POST['ebaystore']); }
+	updateCategories($_POST['orw'], $_POST['amazon'], $_POST['ebay'], $_POST['ebaystore'], $_POST['product_type']); }
 	
 $categories = getCategories();
 

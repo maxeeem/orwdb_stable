@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <title>ORWDB - Off Road Warehouse Database</title>
 <head>
 
@@ -45,13 +46,11 @@ Welcome to the ORW Database.
   <div>
     <p> If you need to update a specific manufacturer that is already in the database. </p>
   </div>-->
-<div>
-<div class="indexsquares"></div>
-<div class="indexsquares"></div>
-<div class="indexsquares"></div>
-<div class="indexsquares"></div>
-<div class="indexsquares"></div>
-<div class="indexsquares"></div>
+<div id="reviewBrand">
+Review Brand help info
+</div>
+<div id="assignCategories">
+Assign Categories help info
 </div>
 </div>
 </body>
