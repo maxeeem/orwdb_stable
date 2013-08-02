@@ -25,7 +25,7 @@ require "db/.db-info.php";
 
 require "db/.mysql.php";
 
-}
+}#
 
 {# FUNCTiONS
 
@@ -57,7 +57,7 @@ function getFile() { global $brand;
 	
 return $SKUs; }
 
-}
+}#
 
 {# VARiABLES
 
@@ -77,7 +77,7 @@ $brand = null;
 
 $db = dbConnect(DBHOST, DBNAME);
 
-}
+}#
 
 {# MAiN
 
@@ -99,7 +99,7 @@ else {
 	
 	if (!empty($remove)) { echo "To Remove"; foreach ($remove as $r) echo $r . "</br>"; } } 
 
-}
+}#
 
 ?>
 </div>

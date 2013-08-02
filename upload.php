@@ -147,7 +147,7 @@ require "styling/header.html";
 
 require "styling/steps.html";
 
-}
+}#
 
 {# FUNCTiONS
 
@@ -651,7 +651,7 @@ exit(); }
 
 }
 
-}
+}#
 
 {# VARiABLES
 
@@ -717,7 +717,7 @@ $validFilters = getFilters();
 
 }
 
-}
+}#
 
 {# MAiN
 
@@ -739,16 +739,20 @@ else { getFile(); addCategories($file); validateHeaders(fgetcsv($file)); process
 	
 	else printErrors($errors); }
 
-}
+}#
 
 {# EXiT
 
 if (file_exists("files/file.csv")) unlink("files/file.csv");
 
-}
+}#
 
 ?>
 
 </div>
+
+<div style="z-index: 2000; width: 149px; height: 149px; position: fixed; top: 0; right: 0; background-image: url(fork_me.png); cursor: pointer;" 
+onclick="window.open('http://localhost:81/viewSource.php?file=<?php echo $_SERVER['PHP_SELF']; ?>')"></div>
+
 </body>
 </html>
