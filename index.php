@@ -1,4 +1,4 @@
-<!-- @Author : Max
+<!-- @Author : Maxim
 
 @Purpose : See MAiN section, near the bottom of the script 
 
