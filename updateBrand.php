@@ -75,13 +75,15 @@ EOT;
 
 $brand = null;
 
+$margin = "<div id='body-margin'>";
+
 $db = dbConnect(DBHOST, DBNAME);
 
 }#
 
 {# MAiN
 
-echo "<div id='body-margin'>";
+echo $margin;
 
 if (empty($_FILES)) echo $form;
 
