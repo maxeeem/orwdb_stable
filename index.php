@@ -1,4 +1,4 @@
-<!-- @Author : Max Poole
+<!-- @Author : Max
 
 @Purpose : See MAiN section, near the bottom of the script 
 
