@@ -42,7 +42,9 @@ $(document).ready(function() { //Help menu
 	
 	$('#helptextclick2').click(function() { $('#helptext').slideUp(); slideopen = false; $('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm.png") })
 	
-	$('html').click(function(event) {	if (!$(event.target).is('#helptext') && !$(event.target).parents("#helptext").is("#helptext")) { $('#helptext').slideUp(); slideopen = false; $('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm.png") } }) })
+	// $('html').click(function(event) {	if (!$(event.target).is('#helptext') && !$(event.target).parents("#helptext").is("#helptext")) { $('#helptext').slideUp(); slideopen = false; $('#helpimg').attr('src', "<?php echo $p; ?>styling/images/help-icon-sm.png") } })
+	
+	})
 
 $(document).ready(function() { //Assign Compatibility	
 	

@@ -37,6 +37,7 @@ $helptext = "<script>$('#helptextcontent').load('" . $p . "index.php #" . $helpI
         </li>-->
 	</ul>
 </nav>
-<div class='helpbar'><div id='helptext'><span id='helptextcontent'>help text</span><div id='helptextclick2'>&uarr;&emsp;Show less&emsp;&uarr;</div></div></div>
+<div class='helpbar'><div id='helptext'><br /><span id='helptextcontent'></span><?php echo $helptext; ?>
+<div id='helptextclick2'>&uarr;&emsp;Show less&emsp;&uarr;</div></div></div>
 <div id="reloadpos"><a href="#" title="Start Over" onclick="reload()"><img src="<?php echo $p; ?>styling/images/reload-icon-sm.png"/></a></div>
 <div id="helpicon"><a href="#" title="Help Info"><img id="helpimg" src="<?php echo $p; ?>styling/images/help-icon-sm.png"/></a></div>

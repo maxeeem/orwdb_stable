@@ -1,9 +1,3 @@
-<!-- @Author : Max Poole
-
-@Purpose : See MAiN section, near the bottom of the script 
-
-@Credits : Jeffrey Tu (CSS & jQuery) -->
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <title>ORWDB - Export Manufacturer</title>
@@ -12,8 +6,6 @@
 <?php $p = ""; require($p . "styling/header-script.php"); ?>
 
 <script>
-
-var i = 1 //counter for additional notes
 
 function selectChannel() {
 
@@ -104,6 +96,8 @@ function checkForm() {
 	if (msg.length > 0) {	alert(msg.join(", ") + " not selected"); return false	}
 	
 return true }
+
+var i = 1 //counter for additional notes
 
 function addNote() {
 
